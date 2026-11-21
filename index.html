@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ZLQ Fácil</title>
+<meta name="description" content="Cálculo de Zona Livre de Queda, fator de queda e força de impacto para trabalho em altura (NR-35).">
+<meta name="theme-color" content="#1f4e8c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ZLQ Fácil">
+<style>
+:root{
+  --bg:#f5f6f8; --card:#fff; --tx:#1d2330; --mut:#5d6677; --ln:#dfe3ea; --pri:#1f4e8c;
+  --ok:#1e8e4e; --okb:#e5f5ec; --at:#b7791f; --atb:#fdf3df; --na:#c53030; --nab:#fde8e8; --cr:#7b1111; --crb:#f3d3d3;
+  --sky:#eef4fb; --gnd:#9aa3ae; --str:#56606e;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#14171d; --card:#1d222b; --tx:#e7eaf0; --mut:#9aa3b2; --ln:#2f3642; --pri:#6ea1e6;
+    --okb:#173325; --atb:#3a2e14; --nab:#3d1b1b; --crb:#4a1010; --ok:#4cc483; --at:#e6a93c; --na:#f07070; --cr:#ff9b9b;
+    --sky:#1a2230; --gnd:#59626e; --str:#8b95a3; }
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45}
+header{background:var(--pri);color:#fff;padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top))}
+body{padding-bottom:env(safe-area-inset-bottom)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.thumbs div{position:relative}
+.thumbs img{width:86px;height:86px;object-fit:cover;border-radius:8px;border:1px solid var(--ln)}
+.thumbs button{position:absolute;top:-6px;right:-6px;border:0;border-radius:99px;width:22px;height:22px;background:var(--na);color:#fff;cursor:pointer;font-size:13px;line-height:22px;padding:0}
+footer{max-width:1180px;margin:0 auto;padding:4px 14px 24px;font-size:12px;color:var(--mut);display:flex;gap:14px;flex-wrap:wrap}
+footer a{color:var(--pri)}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+#modal .box{background:var(--card);color:var(--tx);border-radius:14px;max-width:520px;padding:20px;max-height:90vh;overflow:auto}
+#modal h2{margin:0 0 8px;font-size:18px}
+#modal p{font-size:14px;margin:8px 0}
+.dica{font-size:13px;background:var(--okb);border:1px solid var(--ok);border-radius:8px;padding:8px 10px;margin-bottom:14px}
+header h1{margin:0;font-size:20px}
+header p{margin:2px 0 0;font-size:13px;opacity:.9}
+nav{display:flex;gap:4px;padding:8px 12px;background:var(--card);border-bottom:1px solid var(--ln);overflow-x:auto;position:sticky;top:0;z-index:5}
+nav button{border:0;background:none;color:var(--mut);padding:8px 12px;border-radius:8px;font-size:14px;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--pri);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:14px}
+.grid{display:grid;grid-template-columns:minmax(300px,370px) 1fr;gap:14px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.grid>div,.row2>div{min-width:0}
+@media (max-width:480px){nav{gap:2px;padding:8px 6px}nav button{padding:8px 8px;font-size:13px}main{padding:10px}.card{padding:12px}.bars .b{grid-template-columns:96px 1fr 58px}.chk{grid-template-columns:1fr 128px}td.n{white-space:normal!important}table{table-layout:fixed}td,th{padding:6px 4px;overflow-wrap:anywhere;hyphens:auto}#tForca td:first-child,#tRes td:first-child{width:55%}.badge{white-space:normal!important;text-align:center}}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.card h2{font-size:16px;margin:0 0 10px}
+.card h2 small{font-weight:400;color:var(--mut);font-size:12px}
+label{display:block;font-size:13px;font-weight:600;margin:10px 0 3px}
+label small{font-weight:400;color:var(--mut)}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx);font-size:15px}
+input[type=range]{padding:0;border:0;background:none;accent-color:var(--pri);height:22px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+details{margin-top:12px;border-top:1px solid var(--ln);padding-top:8px}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--pri)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{border:1px solid var(--pri);background:var(--pri);color:#fff;padding:8px 13px;border-radius:8px;font-size:14px;cursor:pointer}
+.btn.sec{background:none;color:var(--pri)}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.l0{background:var(--okb);color:var(--ok)} .l1{background:var(--atb);color:var(--at)}
+.l2{background:var(--nab);color:var(--na)} .l3{background:var(--crb);color:var(--cr)}
+.verdict{border-radius:12px;padding:12px 16px;margin-bottom:14px;border:2px solid}
+.verdict.l0{border-color:var(--ok)} .verdict.l1{border-color:var(--at)} .verdict.l2{border-color:var(--na)} .verdict.l3{border-color:var(--cr)}
+.verdict h2{margin:0;font-size:20px}
+.verdict p{margin:4px 0 0;color:var(--tx)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:7px 6px;border-bottom:1px solid var(--ln);text-align:left;vertical-align:top}
+th{font-size:12px;color:var(--mut);font-weight:600}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+ul.rec{margin:0;padding-left:18px} ul.rec li{margin:4px 0}
+.note{font-size:12px;color:var(--mut)}
+.warn{background:var(--atb);border:1px solid var(--at);border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:14px}
+.hide{display:none!important}
+.edu h3{font-size:15px;margin:18px 0 4px}
+.edu p{margin:4px 0}
+code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:13px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:.3s;pointer-events:none;z-index:9}
+#toast.show{opacity:1}
+#cena{width:100%;height:auto;display:block;background:var(--sky);border-radius:10px}
+#cenaCard:fullscreen{background:var(--card);overflow:auto;padding:20px}
+#cenaCard:fullscreen #cena{max-height:80vh}
+.fala{font-size:15px;margin:10px 0 0;padding:10px 12px;border-radius:8px;background:var(--bg)}
+.fala b{font-variant-numeric:tabular-nums}
+.bars .b{display:grid;grid-template-columns:150px 1fr 70px;gap:8px;align-items:center;margin:6px 0;font-size:13px}
+.bars .trk{background:var(--bg);border-radius:6px;height:16px;position:relative;overflow:visible}
+.bars .fill{height:100%;border-radius:6px}
+.bars .lim{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--na)}
+.chk{display:grid;grid-template-columns:1fr 150px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--ln);font-size:14px}
+.chk select{padding:6px 8px;font-size:13px}
+.chk small{display:block;color:var(--mut);font-size:12px}
+.slider{margin-top:2px}
+input.lock,select:disabled{background:var(--okb)!important;color:var(--tx);opacity:1}
+.eit{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--ln);align-items:center;font-size:14px}
+.it{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln);align-items:center}
+.itn{font-size:14px;font-weight:600;flex:1;min-width:0}
+.itm{font-size:12px;color:var(--mut);font-weight:400;margin-top:3px}
+.itb{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto}
+.itb .btn{padding:5px 10px;font-size:13px}
+.fqbox{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;padding:8px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--ln);font-size:13px}
+.fqbox .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.fqbox .f{color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>ZLQ Fácil</h1>
+  <p>Zona Livre de Queda, fator de queda e força máxima de impacto · NR-35 e ABNT NBR 16489</p>
+</header>
+<nav>
+  <button class="on" data-tab="calc">Calculadora</button>
+  <button data-tab="cen">Cenários</button>
+  <button data-tab="epi">EPIs</button>
+  <button data-tab="edu">Como funciona</button>
+</nav>
+
+<main>
+<section id="tab-calc">
+<div class="grid">
+  <div>
+    <div class="card">
+      <h2>Dados do cenário</h2>
+      <label>Identificação <small>(local, tarefa)</small></label>
+      <input id="nome" placeholder="Ex.: Troca de telha galpão 3">
+
+      <label>Sistema utilizado</label>
+      <select id="sistema">
+        <option value="abs">Talabarte com absorvedor de energia</option>
+        <option value="sem">Talabarte sem absorvedor</option>
+        <option value="ret">Trava-quedas retrátil</option>
+        <option value="lvh">Linha de vida horizontal flexível</option>
+      </select>
+
+      <div class="row2">
+        <div><label>Cinturão <small>cadastro</small></label><select id="epiCinto"></select></div>
+        <div id="grpLig"><label id="lblLig">Talabarte / absorvedor <small>cadastro</small></label><select id="epiLig"></select></div>
+      </div>
+      <div id="epiInfo" class="note"></div>
+
+      <label>Altura livre abaixo da ancoragem (H) <small>m, até o piso ou 1º obstáculo</small></label>
+      <input id="H" type="number" step="0.05" min="0" value="6">
+      <input class="slider" data-for="H" type="range" min="1" max="30" step="0.05" value="6">
+
+      <label id="lblD">Ancoragem acima do engate dorsal (d) <small>m, negativo se abaixo</small></label>
+      <input id="d" type="number" step="0.05" value="0">
+      <input class="slider" data-for="d" type="range" min="-2" max="3" step="0.05" value="0">
+      <div id="fqBox" class="fqbox"></div>
+
+      <div id="grpL">
+      <label>Comprimento do talabarte (L) <small>m, absorvedor fechado + conectores</small></label>
+      <input id="L" type="number" step="0.05" min="0.1" value="1.5">
+      <input class="slider" data-for="L" type="range" min="0.5" max="2.5" step="0.05" value="1.5">
+      </div>
+      <div id="grpDf" class="hide">
+      <label>Distância de frenagem do retrátil (D<sub>f</sub>) <small>m, do manual do fabricante</small></label>
+      <input id="Df" type="number" step="0.05" min="0.1" value="2">
+      </div>
+      <div id="grpDlv" class="hide">
+      <label>Deflexão da linha de vida (D<sub>LV</sub>) <small>m, do projeto da linha</small></label>
+      <input id="Dlv" type="number" step="0.05" min="0" value="0">
+      </div>
+
+      <label>Massa do trabalhador (m) <small>kg, com ferramentas</small></label>
+      <input id="m" type="number" step="1" min="30" value="100">
+      <input class="slider" data-for="m" type="range" min="40" max="160" step="1" value="100">
+
+
+      <div class="row2">
+        <div><label>Capacidade do cinturão <small>kg (CA)</small></label>
+        <select id="cc"><option>100</option><option>120</option><option>140</option><option>150</option></select></div>
+        <div><label id="lblCt">Capacidade talabarte/absorvedor <small>kg</small></label>
+        <select id="ct"><option>100</option><option>120</option><option>140</option><option>150</option></select></div>
+      </div>
+
+      <details>
+        <summary>Dados do fabricante e parâmetros</summary>
+        <div class="row2">
+          <div id="grpA"><label>Extensão máx. absorvedor (A) <small>m</small></label>
+          <input id="A" type="number" step="0.05" min="0" value="1.75"></div>
+          <div><label>Força máx. de retenção (F<sub>m</sub>) <small>kN, declarada</small></label>
+          <input id="F" type="number" step="0.1" min="0.5" value="6"></div>
+        </div>
+        <div class="row2">
+          <div id="grpRa"><label>Razão F<sub>a</sub>/F<sub>m</sub> <small>força média de abertura</small></label>
+          <input id="ra" type="number" step="0.005" min="0.5" max="1" value="0.875"></div>
+          <div><label>Redução massa rígida → corpo <small>fator</small></label>
+          <select id="fh"><option value="1">1,0 (sem redução)</option><option value="1.4">1,4 (Sulowski / OSHA)</option></select></div>
+        </div>
+        <div class="row2">
+          <div><label>Rigidez do talabarte (K) <small>kN</small></label>
+          <input id="K" type="number" step="1" min="1" value="92"></div>
+          <div></div>
+        </div>
+        <div class="row2">
+          <div><label>Engate até os pés (h<sub>D</sub>) <small>m</small></label>
+          <input id="hD" type="number" step="0.05" min="0" value="1.5"></div>
+          <div><label>Margem de segurança (S) <small>m</small></label>
+          <input id="S" type="number" step="0.05" min="0" value="1"></div>
+        </div>
+        <p class="note">F<sub>a</sub>/F<sub>m</sub>: o absorvedor abre com uma força média menor que o pico declarado; 0,875 vem de 16 ensaios EN 355 (Ortiz-Morales et al., 2020). Usar valor menor aumenta a abertura calculada (mais conservador). Fator 1,4: conversão de massa rígida de ensaio para corpo humano aceita pela OSHA (carta de 1991, com Sulowski entre os consultados); reduz a força exibida, por isso o padrão é 1,0. A e F<sub>m</sub>: use o manual e o CA do equipamento. Os padrões (1,75 m e 6 kN) são o pior caso. K é usado só para estimar a força sem absorvedor ou com o absorvedor esgotado; o padrão de 92 kN foi calibrado para reproduzir cerca de 20 kN com fator de queda 2 e 100 kg, valor citado pelo MTE no Comunicado 54.</p>
+      </details>
+
+      <div class="btns">
+        <button class="btn" id="bSalvar">Salvar cenário</button>
+        <button class="btn sec" id="bCopiar">Copiar relatório</button>
+        <button class="btn sec" id="bLimpar">Restaurar padrões</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Isolamento da área abaixo <small>queda de ferramentas e materiais</small></h2>
+      <div class="row2">
+        <div><label>Altura da atividade <small>m até o piso, 0 = automático</small></label>
+        <input id="Hat" type="number" step="0.1" min="0" value="0"></div>
+        <div><label>Fator do raio <small>× altura</small></label>
+        <input id="fIso" type="number" step="0.05" min="0.05" value="0.3"></div>
+      </div>
+      <label>Tipo de isolamento</label>
+      <select id="tipoIso">
+        <option value="cerquite">Cerquite / tela plástica</option>
+        <option value="pedestal">Pedestal com corrente ou fita</option>
+        <option value="cone">Cones com corrente</option>
+        <option value="guarda">Guarda-corpo / grade metálica</option>
+        <option value="tapume">Tapume</option>
+        <option value="fita">Fita zebrada</option>
+      </select>
+      <div id="isoFigBox"></div>
+      <table id="tIso"></table>
+      <p class="note" id="isoNota"></p>
+      <p class="note">O fator 0,3 × altura é o critério informado pelo usuário, não um valor da NR-35. Ajuste ao procedimento da sua empresa; o raio é medido a partir da projeção da atividade no piso, considerando desvio de ferramentas na queda.</p>
+    </div>
+
+    <div class="card">
+      <h2>Relatório em PDF</h2>
+      <div class="row2">
+        <div><label>Elaborado por</label><input id="resp" placeholder="Nome"></div>
+        <div><label>Registro / função</label><input id="reg" placeholder="Ex.: Téc. Seg. Trabalho"></div>
+      </div>
+      <label>Fotos do local <small>até 3, ficam só neste aparelho</small></label>
+      <input id="foto" type="file" accept="image/*" capture="environment" multiple>
+      <div class="thumbs" id="thumbs"></div>
+      <div class="btns">
+        <button class="btn" id="bPdf">Gerar PDF</button>
+        <button class="btn sec" id="bShare">Compartilhar PDF</button>
+      </div>
+      <p class="note" id="pdfMsg"></p>
+    </div>
+
+    <div class="card">
+      <h2>Verificações de campo <small>NR-35 / NBR 16489</small></h2>
+      <div id="checks"></div>
+      <p class="note">Itens pendentes deixam o resultado em "atenção" até serem confirmados no local.</p>
+    </div>
+  </div>
+
+  <div>
+    <div id="fora" class="warn hide"></div>
+    <div id="verdict" class="verdict"></div>
+
+    <div class="card" id="cenaCard">
+      <h2>Cenário ilustrado <small>atualiza com os dados</small></h2>
+      <svg id="cena" viewBox="0 0 560 520" role="img" aria-label="Ilustração do cenário de queda"></svg>
+      <p class="fala" id="fala"></p>
+      <div class="btns"><button class="btn sec" id="bTela">Tela cheia para DDS</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Força máxima no trabalhador</h2>
+      <div class="bars" id="bars"></div>
+      <table id="tForca" style="margin-top:8px"></table>
+    </div>
+
+    <div class="card">
+      <h2>Resultados</h2>
+      <table id="tRes"></table>
+    </div>
+    <div class="card">
+      <h2>Classificação por critério</h2>
+      <table id="tCrit"></table>
+    </div>
+    <div class="card">
+      <h2>Recomendações</h2>
+      <ul class="rec" id="rec"></ul>
+    </div>
+    <p class="note">Estimativa para apoio à Análise de Risco. Não substitui os dados do fabricante, o CA do equipamento nem a avaliação do profissional qualificado. Limite de 6 kN: NR-35. Faixas de 10%, 20%, 5,4 kN e 8 kN e a margem S são critérios internos do app.</p>
+  </div>
+</div>
+</section>
+
+<section id="tab-cen" class="hide">
+  <div class="card">
+    <h2>Cenários salvos</h2>
+    <p class="note">Ficam salvos apenas neste navegador. "Abrir" carrega o cenário na calculadora.</p>
+    <div id="lista"></div>
+  </div>
+  <div class="card">
+    <h2>Exemplos para treinamento</h2>
+    <p class="note">Cenários prontos para DDS e para testar o app. "Abrir" carrega na calculadora.</p>
+    <div id="exemplos"></div>
+  </div>
+</section>
+
+<section id="tab-epi" class="hide">
+  <div class="card">
+    <h2>Cadastro de EPIs</h2>
+    <p class="note">Cadastre cada modelo uma vez com os dados do manual e do CA. Na calculadora, escolha o EPI e os campos são preenchidos e travados. O cadastro fica salvo só neste aparelho; use Exportar para fazer cópia ou levar para outro celular.</p>
+    <input type="hidden" id="eId">
+    <div class="row2">
+      <div><label>Tipo</label><select id="eTipo"><option value="cinto">Cinturão paraquedista</option><option value="tal">Talabarte com absorvedor</option><option value="ret">Trava-quedas retrátil</option></select></div>
+      <div><label>Capacidade <small>kg</small></label><input id="eCap" type="number" step="1" min="50" value="100"></div>
+    </div>
+    <div class="row2">
+      <div><label>Fabricante</label><input id="eFab" placeholder="Ex.: 3M"></div>
+      <div><label>Modelo</label><input id="eMod" placeholder="Ex.: modelo do manual"></div>
+    </div>
+    <div class="row2">
+      <div><label>Nº do CA</label><input id="eCa" inputmode="numeric" placeholder="Ex.: 12345"></div>
+      <div><label>Validade do CA</label><input id="eVal" type="date"></div>
+    </div>
+    <div class="row2 eTal">
+      <div><label>Comprimento L <small>m</small></label><input id="eL" type="number" step="0.05" min="0.1" value="1.5"></div>
+      <div><label>Extensão máx. absorvedor A <small>m</small></label><input id="eA" type="number" step="0.05" min="0" value="1.75"></div>
+    </div>
+    <div class="row2 eTal eRet">
+      <div><label>Força máx. de retenção F<sub>m</sub> <small>kN</small></label><input id="eFm" type="number" step="0.1" min="0.5" value="6"></div>
+      <div class="eRet"><label>Distância de frenagem D<sub>f</sub> <small>m</small></label><input id="eDf" type="number" step="0.05" min="0.1" value="2"></div>
+    </div>
+    <div class="btns">
+      <button class="btn" id="eSalvar">Salvar EPI</button>
+      <button class="btn sec" id="eNovo">Limpar formulário</button>
+    </div>
+    <p class="note" id="eMsg"></p>
+  </div>
+  <div class="card">
+    <h2>EPIs cadastrados</h2>
+    <div id="eLista"></div>
+    <div class="btns">
+      <button class="btn sec" id="eExp">Exportar cadastro</button>
+      <label class="btn sec" style="margin:0;display:inline-block">Importar cadastro<input id="eImp" type="file" accept=".json,application/json" class="hide"></label>
+    </div>
+  </div>
+</section>
+
+<section id="tab-edu" class="hide">
+  <div class="card edu">
+    <h2>Como o cálculo funciona</h2>
+    <h3>Queda livre (QL) e fator de queda (FQ)</h3>
+    <p><code>QL = L − d</code> e <code>FQ = QL / L</code>. FQ 0: ancoragem acima, talabarte esticado. FQ 1: ancoragem na altura do engate dorsal. FQ 2: ancoragem na altura dos pés.</p>
+    <h3>Zona Livre de Queda (ZLQ)</h3>
+    <p>Medida a partir do ponto de ancoragem: <code>ZLQ = L + A + h<sub>D</sub> + S</code>. Após a retenção, o engate fica a L + A abaixo da ancoragem, os pés ficam h<sub>D</sub> abaixo do engate, e S é a folga até o obstáculo. Valores usuais: h<sub>D</sub> = 1,5 m, S = 1,0 m e A = 1,75 m (extensão máxima associada à NBR 14629).</p>
+    <h3>Abertura do absorvedor</h3>
+    <p>O fabricante declara a força máxima de retenção F<sub>m</sub> (pico). O absorvedor abre com uma força média menor, F<sub>a</sub> = r·F<sub>m</sub>. Em 16 ensaios de absorvedores EN 355 (100 kg, FQ 2), F<sub>a</sub> ficou em cerca de 87,5% de F<sub>m</sub>; as normas ANSI Z359.6 e CSA Z259.16 usam 80% (Ortiz-Morales et al., Materials, 2020). Balanço de energia: <code>F<sub>a</sub>·x = m·g·(QL + x)</code>, logo <code>x = m·g·QL / (F<sub>a</sub> − m·g)</code>. Se x &gt; A, o absorvedor esgota o curso antes de parar a queda.</p>
+    <h3>Força máxima aplicada ao trabalhador</h3>
+    <p><b>Com absorvedor, curso suficiente (x ≤ A):</b> <code>F<sub>máx</sub> = F<sub>m</sub></code> (pico declarado). A força média é <code>F<sub>a</sub> = m·g·(QL + x) / x</code>.</p>
+    <p><b>Com absorvedor esgotado (x &gt; A):</b> sobra a energia <code>E<sub>r</sub> = m·g·(QL + A) − F<sub>a</sub>·A</code>, que passa a ser absorvida pela elasticidade do talabarte: <code>F<sub>máx</sub> = m·g + √[(m·g)² + 2·(K/L)·E<sub>r</sub>]</code>.</p>
+    <p><b>Sem absorvedor:</b> modelo elástico clássico do fator de queda: <code>F<sub>máx</sub> = m·g + √[(m·g)² + 2·m·g·FQ·K]</code>. Mostra por que talabarte sem absorvedor é proibido para retenção: com FQ 2 a força passa de 20 kN.</p>
+    <p><b>Sem queda livre (QL = 0):</b> carga aplicada de forma brusca, <code>F = mín(F<sub>m</sub>, 2·m·g)</code>.</p>
+    <p><b>Fator de redução massa rígida → corpo humano (f):</b> os ensaios usam massa rígida de aço; no corpo humano parte da energia é absorvida pelo próprio corpo e pelo cinturão. A OSHA registrou em 1991 que aceita o fator 1,4 para essa conversão, após consulta a Sulowski e outros especialistas. Todas as forças exibidas são divididas por f. O padrão é 1,0 (sem redução), que é o lado da segurança.</p>
+    <p><b>Retenção lateral:</b> Sulowski aponta que forças acima de cerca de 4 kN já podem causar lesão significativa quando a retenção não é no eixo da coluna (queda pendular).</p>
+    <p>A desaceleração em "g" é <code>F / (m·g)</code>.</p>
+    <h3>Trava-quedas retrátil</h3>
+    <p>O cabo fica sempre esticado, então não há fator de queda. O fabricante informa a distância de frenagem D<sub>f</sub>, que já inclui o travamento. Com o retrátil a d metros acima do engate e na vertical do trabalhador: <code>ZLQ = d + D<sub>f</sub> + h<sub>D</sub> + S</code>, medida a partir do retrátil. O retrátil precisa estar acima do engate dorsal, salvo modelos certificados para uso em borda.</p>
+    <h3>Linha de vida horizontal flexível</h3>
+    <p>Sob a carga da queda a linha cede (deflexão), e o trabalhador desce junto. O valor vem do projeto da linha para o número de trabalhadores conectados: <code>ZLQ = D<sub>LV</sub> + L + A + h<sub>D</sub> + S</code>, medida a partir da linha. A deflexão também entra na energia que o absorvedor precisa dissipar.</p>
+    <h3>Queda pendular</h3>
+    <p>O cálculo considera a ancoragem na vertical do trabalhador. Se a ancoragem ficar deslocada para o lado, o trabalhador balança após a retenção, desce mais que o calculado e pode bater em estruturas laterais. Por isso o item "Ancoragem acima e na vertical do trabalhador" das verificações de campo deve ser confirmado no local. Em retenção lateral há relatos de lesão acima de 4 kN (Sulowski).</p>
+    <h3>Isolamento da área abaixo</h3>
+    <p>Ferramentas e materiais que caem se desviam na queda. O app calcula o raio a isolar como <code>raio = fator × altura da atividade</code>, com fator padrão 0,3 (exemplo: 10 m × 0,3 = 3 m), a partir da projeção da atividade no piso. Esse fator é critério do usuário e deve seguir o procedimento da empresa. Barreiras físicas (cerquite, guarda-corpo, tapume) impedem a passagem; pedestal, cones e fita zebrada só delimitam e sinalizam.</p>
+    <h3>NR-35</h3>
+    <p>O SPIQ deve ser selecionado para que a força de impacto transmitida ao trabalhador seja de no máximo 6 kN, considerando queda livre, fator de queda, zona livre de queda e compatibilidade entre os elementos, e posicionado de forma que o trabalhador não colida com estrutura inferior. O MTE (Comunicado 54) proíbe talabarte sem absorvedor para retenção de queda.</p>
+    <h3>ABNT NBR 16489:2017</h3>
+    <p>Norma de recomendações e orientações para seleção, uso e manutenção de sistemas de proteção individual contra quedas (SPIQ). O app aplica, no cálculo e nas verificações de campo, os pontos de seleção e uso: cálculo da ZLQ a partir da ancoragem, posição da ancoragem acima do usuário, queda pendular, bordas, compatibilidade, inspeção, massa do usuário e resgate. A lista de verificação foi montada a partir do escopo público da norma e da NR-35; confira com o texto oficial da ABNT antes de usar como evidência de conformidade em auditoria.</p>
+    <h3>Classificação usada no app</h3>
+    <table>
+      <tr><th>Critério</th><th>Dentro</th><th>Atenção</th><th>Não atende</th><th>Crítico</th></tr>
+      <tr><td>H / ZLQ</td><td>≥ 1,10</td><td>1,00 a 1,10</td><td>0,80 a 1,00</td><td>&lt; 0,80</td></tr>
+      <tr><td>Força máxima</td><td>≤ 5,4 kN</td><td>5,4 a 6,0 kN</td><td>6,0 a 8,0 kN</td><td>&gt; 8 kN, sem absorvedor ou curso esgotado</td></tr>
+      <tr><td>Fator de queda</td><td>≤ 1</td><td>1 a 2</td><td></td><td>&gt; 2 (retrátil: abaixo do engate)</td></tr>
+      <tr><td>CA dos EPIs</td><td>válido</td><td>vencido no cadastro</td><td></td><td></td></tr>
+      <tr><td>Massa</td><td>≤ menor capacidade (cinturão, talabarte)</td><td></td><td>&gt; capacidade</td><td></td></tr>
+      <tr><td>Verificações de campo</td><td>conforme</td><td>pendente</td><td>não conforme</td><td>não conforme (ancoragem ou bordas)</td></tr>
+    </table>
+    <h3>Limitações</h3>
+    <p>O modelo considera massa rígida e frenagem constante. Alongamento do cinturão e rebote não entram no cálculo. A queda pendular é estimada sem atrito e sem a energia absorvida pelo equipamento durante o balanço. A deflexão da linha de vida e a distância de frenagem do retrátil dependem dos dados de projeto e do fabricante.</p>
+  </div>
+</section>
+</main>
+<footer>
+  <span>ZLQ Fácil v1.1.2</span>
+  <a href="privacidade.html">Política de privacidade</a>
+  <a href="termos.html">Termos de uso</a>
+  <span id="statusOff"></span>
+</footer>
+<div id="modal" class="hide"><div class="box">
+  <h2>Antes de usar</h2>
+  <p>O ZLQ Fácil faz estimativas para apoiar a Análise de Risco de trabalho em altura. Os resultados <b>não substituem</b> os dados do fabricante, o Certificado de Aprovação (CA) dos equipamentos nem a avaliação e a responsabilidade do profissional qualificado.</p>
+  <p>Os dados que você digita e as fotos ficam somente neste aparelho. O app não envia nenhuma informação para servidores.</p>
+  <p>Leia os <a href="termos.html" target="_blank">Termos de uso</a> e a <a href="privacidade.html" target="_blank">Política de privacidade</a>.</p>
+  <div class="btns"><button class="btn" id="bAceito">Li e concordo</button></div>
+</div></div>
+<div id="toast"></div>
+<script src="pdf.js"></script>
+
+<script>
+const G = 9.81;
+const NIVEIS = ["Dentro dos parâmetros","Ponto de atenção","Não atende","Ponto crítico"];
+const CORES = ["var(--ok)","var(--at)","var(--na)","var(--cr)"];
+const DESC = [
+  "Valores e verificações atendem aos critérios considerados.",
+  "Atende, mas há folga pequena ou verificações pendentes. Revise antes de liberar.",
+  "Valores ou verificações não atendem. Não liberar a atividade nessa configuração.",
+  "Risco grave e iminente. Não liberar. Corrigir o sistema antes de qualquer exposição."
+];
+const CHECKS = [
+  ["anc","Ponto de ancoragem com resistência atestada","Projeto ou certificação (NR-35 Anexo II, NBR 16325)",3],
+  ["vert","Ancoragem acima e na vertical do trabalhador","Evita queda pendular e choque lateral",2],
+  ["borda","Talabarte sem contato com bordas ou arestas vivas","Borda pode cortar o talabarte na retenção",3],
+  ["insp","EPI inspecionado antes do uso, CA válido","Inclui cinturão, talabarte, absorvedor e conectores",2],
+  ["comp","Compatibilidade entre os elementos do SPIQ","Conectores, ancoragem e cinturão compatíveis",2],
+  ["resg","Plano de resgate definido e recursos no local","Reduz o tempo em suspensão após a queda",2],
+  ["aut","Trabalhador capacitado e autorizado","NR-35",2],
+  ["isol","Área abaixo isolada e sinalizada","Raio calculado no card de isolamento",2]
+];
+const PADRAO = {nome:"",sistema:"abs",H:6,d:0,L:1.5,m:100,cc:100,ct:100,A:1.75,F:6,ra:0.875,fh:1,hD:1.5,S:1,K:92,Df:2,Dlv:0,X:0,Hat:0,fIso:0.3,tipoIso:"cerquite",epiCinto:"",epiLig:"",chk:{}};
+const NUM = ["H","d","L","m","cc","ct","A","F","ra","fh","hD","S","K","Df","Dlv","Hat","fIso"];
+const $ = id => document.getElementById(id);
+const fmt = (v,n=2) => (v==null||!isFinite(v)) ? "–" : v.toFixed(n).replace(".",",");
+
+// checklist UI
+$("checks").innerHTML = CHECKS.map(([k,t,s])=>`<div class="chk"><div>${t}<small>${s}</small></div>
+  <select data-chk="${k}"><option value="p">Pendente</option><option value="s">Conforme</option><option value="n">Não conforme</option><option value="na">Não se aplica</option></select></div>`).join("");
+
+function ler(){
+  const o = {X:0, nome:$("nome").value, sistema:$("sistema").value, tipoIso:$("tipoIso").value, epiCinto:$("epiCinto").value, epiLig:$("epiLig").value, chk:{}};
+  NUM.forEach(k=> o[k] = parseFloat($(k).value));
+  document.querySelectorAll("[data-chk]").forEach(s=> o.chk[s.dataset.chk] = s.value);
+  return o;
+}
+function escrever(o){
+  $("nome").value = o.nome||""; $("sistema").value = o.sistema||"abs"; $("tipoIso").value = o.tipoIso||"cerquite";
+  ["cc","ct"].forEach(k=>{ if(o[k]!==undefined && ![...$(k).options].some(op=>op.value==String(o[k]))) $(k).add(new Option(o[k],o[k])); });
+  NUM.forEach(k=>{ if(o[k]!==undefined){ $(k).value = o[k]; syncSlider(k); } });
+  popularEpis(); $("epiCinto").value = epiPorId(o.epiCinto) ? o.epiCinto : ""; $("epiLig").value = epiPorId(o.epiLig) ? o.epiLig : "";
+  aplicarEpi();
+  document.querySelectorAll("[data-chk]").forEach(s=> s.value = (o.chk&&o.chk[s.dataset.chk])||"p");
+}
+function syncSlider(k){ const s=document.querySelector(`.slider[data-for="${k}"]`); if(s) s.value=$(k).value; }
+
+function forcaMax(i, QL, FQ){
+  const mg = i.m*G, Fm = i.F*1000, Fa = i.ra*Fm, K = i.K*1000, fh = i.fh||1;
+  const res = {x:null, Fmax:null, modo:"", Esem:null, Fa};
+  res.Esem = (mg + Math.sqrt(mg*mg + 2*mg*FQ*K))/fh;      // sem absorvedor
+  res.energia = mg*QL;
+  if(i.sistema==="sem"){ res.Fmax = res.Esem; res.modo="Sem absorvedor (modelo elástico)"; return res; }
+  if(Fa <= mg){ res.Fmax = null; res.modo="Absorvedor incompatível com a massa"; res.incomp=true; return res; }
+  if(QL===0){ res.x=0; res.Fmax=Math.min(Fm,2*mg)/fh; res.modo="Sem queda livre (carga brusca)"; return res; }
+  res.x = mg*QL/(Fa-mg);
+  res.energia = mg*(QL+Math.min(res.x,i.A));
+  if(res.x <= i.A){ res.Fmax = Fm/fh; res.modo="Absorvedor com curso suficiente"; }
+  else{
+    const Er = mg*(QL+i.A) - Fa*i.A, k = K/i.L;
+    res.Fmax = (mg + Math.sqrt(mg*mg + 2*k*Er))/fh;
+    res.modo="Absorvedor esgotado: pico no talabarte"; res.esgotado=true;
+  }
+  return res;
+}
+
+// ---------- cadastro de EPIs (armazenamento) ----------
+let memEpis = [];
+function lerEpis(){ try{ return JSON.parse(localStorage.getItem("zlq_epis")||"[]"); }catch(e){ return memEpis; } }
+function gravarEpis(l){ memEpis=l; try{ localStorage.setItem("zlq_epis", JSON.stringify(l)); }catch(e){} }
+function epiPorId(id){ return id ? lerEpis().find(e=>e.id===id) : null; }
+function descEpi(e){ return e ? `${e.fab||""} ${e.modelo||""}`.trim()+(e.ca?` (CA ${e.ca})`:"") : ""; }
+const hojeISO = () => new Date().toISOString().slice(0,10);
+
+function calcular(i){
+  const r = {erros:[]}, sis = i.sistema, ret = sis==="ret";
+  i.X = 0;                                          // cálculo sempre com a ancoragem na vertical
+  NUM.forEach(k=>{ if(!isFinite(i[k]) || (k!=="d" && i[k]<0)) r.erros.push(k); });
+  if(!(i.L>0)) r.erros.push("L");
+  if(!(i.K>0)) r.erros.push("K");
+  if(!(i.ra>0 && i.ra<=1)) r.erros.push("ra");
+  if(!ret && i.X > i.L) r.erros.push("X (afastamento maior que o talabarte)");
+  if(ret && !(i.Df>0)) r.erros.push("Df");
+  i.mmax = Math.min(i.cc, i.ct);
+  if(r.erros.length) return r;
+  const mg = i.m*G, fh = i.fh||1;
+
+  if(ret){
+    r.R0 = Math.hypot(i.X, i.d);                       // cabo estendido no início da queda
+    r.QL = 0; r.FQ = null;
+    r.segs = [["d",r.R0,"#2f6fd0"],["Df",i.Df,"#e8771e"],["hD",i.hD,"#2b9e8f"],["S",i.S,"#c9a227"]];
+    r.parada = r.R0 + i.Df + i.hD; r.paradaEst = r.parada;
+    r.ZLQ = r.parada + i.S;
+    r.x = null; r.Fmax = i.F*1000/fh; r.Fsem = null;
+    r.modoF = "Retrátil: força máxima declarada pelo fabricante";
+    r.energia = mg*(i.Df + Math.max(0, r.R0 - i.d));
+    r.Rp = r.R0;
+    r.nQ = i.d > 0 ? 0 : 3;
+    r.motQ = i.d > 0 ? "Ancoragem acima do engate" : "Retrátil ancorado na altura ou abaixo do engate";
+  } else {
+    const defl = sis==="lvh" ? i.Dlv : 0, ext = sis==="sem" ? 0 : i.A;
+    r.QL = Math.max(0, i.L - i.d);
+    r.FQ = r.QL / i.L;
+    const f = forcaMax(i, r.QL + defl, r.FQ);
+    Object.assign(r, {x:f.x, Fmax:f.Fmax, modoF:f.modo, Fsem:f.Esem, energia:f.energia, incomp:f.incomp, esgotado:f.esgotado});
+    r.segs = [];
+    if(defl>0) r.segs.push(["Deflexão",defl,"#7a5cc7"]);
+    r.segs.push(["L",i.L,"#2f6fd0"]);
+    if(ext>0) r.segs.push(["A",ext,"#e8771e"]);
+    r.segs.push(["hD",i.hD,"#2b9e8f"],["S",i.S,"#c9a227"]);
+    r.parada = defl + i.L + ext + i.hD;                                         // pior caso
+    r.paradaEst = defl + i.L + (sis==="sem" ? 0 : (f.x==null ? i.A : Math.min(f.x, i.A))) + i.hD;
+    r.ZLQ = r.parada + i.S;
+    r.Rp = i.L;
+    r.nQ = r.FQ <= 1 ? 0 : r.FQ <= 2 ? 1 : 3;
+    r.motQ = "FQ "+fmt(r.FQ);
+  }
+  r.R = i.H / r.ZLQ;
+  r.margem = i.H - r.ZLQ;
+  r.sobra = i.H - r.parada;
+
+  // força
+  const Fk = r.Fmax==null ? null : r.Fmax/1000;
+  if(sis==="sem"){ r.nF=3; r.motF="Talabarte sem absorvedor: proibido para retenção"; }
+  else if(r.incomp){ r.nF=3; r.motF="Força média de abertura ≤ peso: absorvedor incompatível"; }
+  else if(r.esgotado){ r.nF=3; r.motF="Absorvedor esgota o curso"; }
+  else if(Fk>8){ r.nF=3; r.motF="Acima de 8 kN"; }
+  else if(Fk>6){ r.nF=2; r.motF="Acima de 6 kN (limite NR-35)"; }
+  else if(Fk>5.4){ r.nF=1; r.motF="Próxima de 6 kN"; }
+  else { r.nF=0; r.motF="Dentro do limite"; }
+
+  // queda pendular
+  r.dropPend = i.X>0 ? r.Rp - Math.sqrt(Math.max(0, r.Rp*r.Rp - i.X*i.X)) : 0;
+  r.theta = i.X>0 ? Math.asin(Math.min(1, i.X/r.Rp))*180/Math.PI : 0;
+  r.vLat = Math.sqrt(2*G*r.dropPend);
+  if(i.X<=0){ r.nP=0; r.motP="Ancoragem na vertical"; }
+  else if(r.vLat>3){ r.nP=2; r.motP="Balanço com velocidade alta"; }
+  else if(r.vLat>2 || (Fk!=null && Fk>4)){ r.nP=1; r.motP = r.vLat>2 ? "Balanço moderado" : "Retenção lateral acima de 4 kN"; }
+  else { r.nP=0; r.motP="Balanço pequeno"; }
+
+  r.nZ = r.R >= 1.10 ? 0 : r.R >= 1 ? 1 : r.R >= 0.8 ? 2 : 3;
+  r.semDefl = sis==="lvh" && !(i.Dlv>0);
+  if(r.semDefl) r.nZ = Math.max(r.nZ, 1);
+  r.nM = i.m <= i.mmax ? 0 : 2;
+
+  // CA dos EPIs do cadastro
+  r.caVenc = [];
+  [i.epiCinto, sis==="sem" ? "" : i.epiLig].forEach(id=>{ const e=epiPorId(id); if(e && e.val && e.val < hojeISO()) r.caVenc.push(descEpi(e)); });
+  r.nCA = r.caVenc.length ? 1 : 0;
+
+  r.nC = 0; r.pend = []; r.nconf = [];
+  CHECKS.forEach(([k,t,,sev])=>{
+    const v = (i.chk||{})[k]||"p";
+    if(v==="p"){ r.nC=Math.max(r.nC,1); r.pend.push(t); }
+    if(v==="n"){ r.nC=Math.max(r.nC,sev); r.nconf.push([t,sev]); }
+  });
+  r.geral = Math.max(r.nZ, r.nF, r.nQ, r.nM, r.nC, r.nP, r.nCA);
+  r.rec = recomendacoes(i, r);
+  return r;
+}
+
+function recomendacoes(i, r){
+  const a = [], ret = i.sistema==="ret";
+  if(i.fh>1) a.push("Força exibida reduzida pelo fator 1,4 (massa rígida → corpo). Para decisão de conformidade, compare também o valor sem redução.");
+  if(i.sistema==="sem") a.push(`Substituir por talabarte com absorvedor de energia. Sem absorvedor, a força estimada é de ${fmt(r.Fsem/1000,1)} kN, acima do limite de 6 kN.`);
+  if(r.semDefl) a.push("Informe a deflexão da linha de vida horizontal (valor do projeto da linha). Sem ela a ZLQ fica subestimada.");
+  if(r.nZ >= 2){
+    a.push(`Faltam ${fmt(-r.margem)} m de altura livre. ` + (ret
+      ? "Aproximar o trabalhador da vertical do retrátil, ancorar o retrátil mais baixo (mantendo-o acima do engate) ou usar modelo com menor distância de frenagem."
+      : "Elevar o ponto de ancoragem, usar talabarte mais curto ou avaliar trava-quedas retrátil (com distância de frenagem do fabricante)."));
+    a.push("Se a tarefa permitir, usar sistema de restrição de movimentação, que impede o trabalhador de chegar à borda.");
+  } else if(r.nZ===1 && !r.semDefl){
+    a.push(`Folga de apenas ${fmt(r.margem)} m além da margem S. Medir H no local e verificar obstáculos intermediários (vigas, máquinas, guarda-corpos).`);
+  }
+  if(ret && i.d<=0) a.push("Retrátil ancorado na altura ou abaixo do engate dorsal: só use modelo certificado pelo fabricante para essa condição (uso em borda). Prefira ancorar acima da cabeça.");
+  if(ret && i.X>0) a.push(`Com o retrátil afastado ${fmt(i.X)} m, o cabo estendido (${fmt(r.R0)} m) aumenta a ZLQ em ${fmt(r.dropPend)} m em relação à ancoragem na vertical.`);
+  if(!ret && r.FQ>1) a.push("Reposicionar a ancoragem acima do engate dorsal para reduzir o fator de queda para 1 ou menos.");
+  if(r.x!=null && r.x>i.A) a.push(`O absorvedor precisaria abrir ${fmt(r.x)} m, mas tem ${fmt(i.A)} m. Usar absorvedor certificado para a massa e o fator de queda reais, ou reduzir a queda livre.`);
+  if(r.nF===2) a.push("Selecionar elemento de ligação que garanta força de impacto de no máximo 6 kN (NR-35).");
+  if(i.X>0) a.push(`O balanço alcança até ${fmt(i.X)} m do outro lado da vertical da ancoragem: confirmar no local que não há estrutura, máquina ou pilar nessa faixa.`);
+  if(r.nP>=1) a.push(`Queda pendular: ancoragem afastada ${fmt(i.X)} m da vertical (ângulo de ${fmt(r.theta,0)}°). Reposicionar a ancoragem o mais próximo possível da vertical do trabalhador. Em retenção lateral há relatos de lesão acima de 4 kN (Sulowski, citado por Ortiz-Morales et al., 2020).`);
+  if(r.nM>=2){
+    const fal = [];
+    if(i.m>i.cc) fal.push(`cinturão (${i.cc} kg)`);
+    if(i.m>i.ct) fal.push(`${ret?"retrátil":"talabarte/absorvedor"} (${i.ct} kg)`);
+    a.push(`Massa de ${i.m} kg acima da capacidade do ${fal.join(" e do ")}. Usar EPI certificado para a massa real (há modelos para 120 e 140 kg).`);
+  }
+  if(i.m>100 && !ret && i.sistema!=="sem" && r.nM===0) a.push("Massa acima de 100 kg: confirmar que F<sub>m</sub> e A informados são os declarados pelo fabricante para essa massa, e não os do ensaio padrão de 100 kg.");
+  r.caVenc.forEach(d=> a.push(`CA vencido no cadastro: ${d}. Verificar a situação do CA (NR-6) antes de usar.`));
+  r.nconf.forEach(([t])=> a.push("Não conforme: "+t.toLowerCase()+". Corrigir antes de liberar."));
+  if(r.pend.length) a.push(`Confirmar no local: ${r.pend.map(t=>t.toLowerCase()).join("; ")}.`);
+  if(r.geral===0) a.push("Configuração atende aos critérios. Registrar na Análise de Risco e na Permissão de Trabalho.");
+  if(!ret) a.push("Não usar absorvedor de curso maior para resolver falta de altura: isso aumenta a ZLQ necessária.");
+  return a;
+}
+
+const badge = n => `<span class="badge l${n}">${NIVEIS[n]}</span>`;
+
+// linhas usadas na tela, no relatório copiado e no PDF
+function nomeSistema(s){ return {abs:"Talabarte com absorvedor de energia",sem:"Talabarte sem absorvedor",ret:"Trava-quedas retrátil",lvh:"Linha de vida horizontal flexível"}[s]||s; }
+function formulaZLQ(i){ return i.sistema==="ret" ? "d + Df + hD + S" : i.sistema==="lvh" ? "Deflexão + L + A + hD + S" : i.sistema==="sem" ? "L + hD + S" : "L + A + hD + S"; }
+function linhasDados(i){
+  const ret = i.sistema==="ret", l = [["Sistema", nomeSistema(i.sistema)]];
+  const ec = epiPorId(i.epiCinto), el = i.sistema==="sem" ? null : epiPorId(i.epiLig);
+  if(ec) l.push(["Cinturão (cadastro)", descEpi(ec)]);
+  if(el) l.push([ret?"Retrátil (cadastro)":"Talabarte (cadastro)", descEpi(el)]);
+  l.push(["Altura livre abaixo da ancoragem (H)", fmt(i.H)+" m"]);
+  l.push([ret?"Retrátil acima do engate dorsal (d)":i.sistema==="lvh"?"Linha de vida acima do engate dorsal (d)":"Ancoragem acima do engate dorsal (d)", fmt(i.d)+" m"]);
+  if(ret) l.push(["Distância de frenagem do retrátil (Df) · Fm declarada", fmt(i.Df)+" m · "+fmt(i.F,1)+" kN"]);
+  else l.push(["Comprimento do talabarte (L)", fmt(i.L)+" m"]);
+  if(i.sistema==="lvh") l.push(["Deflexão da linha de vida", i.Dlv>0?fmt(i.Dlv)+" m":"não informada"]);
+  l.push(["Massa do trabalhador com ferramentas", i.m+" kg"]);
+  l.push(["Capacidade do cinturão / "+(ret?"retrátil":"talabarte"), i.cc+" kg / "+i.ct+" kg"]);
+  if(!ret && i.sistema!=="sem") l.push(["Extensão máx. do absorvedor (A) · Fm declarada · Fa/Fm", fmt(i.A)+" m · "+fmt(i.F,1)+" kN · "+fmt(i.ra,3)]);
+  l.push(["Engate até os pés (hD) · margem (S) · fator corpo", fmt(i.hD)+" m · "+fmt(i.S)+" m · "+fmt(i.fh,1)]);
+  return l;
+}
+function linhasRes(i, r){
+  const ret = i.sistema==="ret", l = [];
+  if(ret){
+    l.push(["Retrátil acima do engate (d)", fmt(r.R0)+" m"]);
+    l.push(["Fator de queda", "não se aplica (cabo sempre esticado)"]);
+  } else {
+    l.push(["Queda livre (QL = L − d)", fmt(r.QL)+" m"]);
+    l.push(["Fator de queda (FQ = QL / L)", fmt(r.FQ)]);
+  }
+  l.push(["ZLQ necessária ("+formulaZLQ(i)+")", fmt(r.ZLQ)+" m"]);
+  l.push(["Altura livre disponível (H)", fmt(i.H)+" m"]);
+  l.push(["Folga (H − ZLQ) · relação H/ZLQ", fmt(r.margem)+" m · "+fmt(r.R)]);
+  l.push(["Pés após a retenção, pior caso", fmt(r.parada)+" m abaixo da ancoragem"]);
+  if(!ret) l.push(["Pés após a retenção, estimativa", fmt(r.paradaEst)+" m abaixo da ancoragem"]);
+  if(i.X>0){
+    l.push(["Queda pendular: ângulo · queda adicional", fmt(r.theta,0)+"° · "+fmt(r.dropPend)+" m"]);
+    l.push(["Velocidade lateral ao passar pela vertical", fmt(r.vLat,1)+" m/s"]);
+  }
+  return l;
+}
+function linhasForca(i, r){
+  const Fk = r.Fmax==null ? null : r.Fmax/1000, ret = i.sistema==="ret", l = [];
+  l.push(["Situação", r.modoF]);
+  l.push(["Força máxima estimada", Fk==null?"não controlada":fmt(Fk,2)+" kN"]);
+  if(!ret && i.sistema!=="sem") l.push(["Força média de abertura (Fa)", fmt(i.F*i.ra,2)+" kN"]);
+  l.push(["Desaceleração", Fk==null?"–":fmt(r.Fmax/(i.m*G),1)+" g"]);
+  l.push(["Energia a dissipar", fmt(r.energia/1000,2)+" kJ"]);
+  if(!ret) l.push(["Abertura do absorvedor", r.x==null?"–":fmt(r.x)+" m de "+fmt(i.A)+" m"]);
+  return l;
+}
+function linhasCrit(i, r){
+  const l = [
+    ["Zona Livre de Queda", r.nZ, r.semDefl ? "Deflexão da linha não informada" : r.R<1?"Falta "+fmt(-r.margem)+" m ("+fmt((1-r.R)*100,1)+"%)":"Folga de "+fmt(r.margem)+" m ("+fmt((r.R-1)*100,1)+"%)"],
+    ["Força máxima", r.nF, r.motF],
+    [i.sistema==="ret"?"Posição do retrátil":"Fator de queda", r.nQ, r.motQ],
+    ["Massa x capacidade", r.nM, `${i.m} kg (cinturão ${i.cc} kg, ${i.sistema==="ret"?"retrátil":"talabarte"} ${i.ct} kg)`]
+  ];
+  if(r.caVenc.length) l.push(["CA dos EPIs", r.nCA, r.caVenc.length+" vencido(s)"]);
+  l.push(["Verificações de campo", r.nC, (r.nconf.length?r.nconf.length+" não conforme(s)":"")+(r.nconf.length&&r.pend.length?", ":"")+(r.pend.length?r.pend.length+" pendente(s)":"")+(!r.nconf.length&&!r.pend.length?"Todas conformes":"")]);
+  return l;
+}
+const tabelaHTML = l => l.map(([a,b])=>`<tr><td>${a}</td><td class="n">${b}</td></tr>`).join("");
+
+// ---------- ilustração ----------
+function pessoa(cx, yFeet, s, cor, suspenso, hDm){
+  const p = m => yFeet - m*s, lw = Math.max(1.5, s*0.07);
+  const sh = p(1.42), hip = p(0.92), head = p(1.62), r = Math.max(3, 0.11*s);
+  const legS = 0.13*s, arm = suspenso ? 0.16*s : 0.24*s;
+  const ring = p(Math.min(Math.max(hDm,0.9),1.7));
+  let g = `<g stroke="${cor}" stroke-width="${lw*1.6}" stroke-linecap="round" fill="none">`;
+  g += `<line x1="${cx}" y1="${sh}" x2="${cx}" y2="${hip}"/>`;
+  g += `<line x1="${cx}" y1="${hip}" x2="${cx-legS}" y2="${yFeet}"/><line x1="${cx}" y1="${hip}" x2="${cx+legS}" y2="${yFeet}"/>`;
+  g += `<line x1="${cx}" y1="${sh+0.05*s}" x2="${cx-arm}" y2="${p(suspenso?0.95:0.85)}"/><line x1="${cx}" y1="${sh+0.05*s}" x2="${cx+arm}" y2="${p(suspenso?0.95:0.85)}"/>`;
+  g += `</g>`;
+  g += `<circle cx="${cx}" cy="${head}" r="${r}" fill="${cor}"/>`;
+  g += `<path d="M${cx-r*1.15},${head-r*0.15} A${r*1.15},${r*1.15} 0 0 1 ${cx+r*1.15},${head-r*0.15} Z" fill="#f2c200" stroke="#a88600" stroke-width="1"/>`;
+  g += `<g stroke="#e8771e" stroke-width="${Math.max(1.5,lw)}" fill="none"><line x1="${cx-0.1*s}" y1="${sh}" x2="${cx+0.1*s}" y2="${hip}"/><line x1="${cx+0.1*s}" y1="${sh}" x2="${cx-0.1*s}" y2="${hip}"/></g>`;
+  g += `<circle cx="${cx}" cy="${ring}" r="${Math.max(2.5,0.05*s)}" fill="#e8771e" stroke="#fff" stroke-width="1"/>`;
+  return {svg:g, ring};
+}
+
+function cotaV(x, y1, y2, cor, txt, lado){
+  if(Math.abs(y2-y1)<2) return "";
+  const tx = lado==="e" ? x-6 : x+6, an = lado==="e" ? "end" : "start";
+  let s = `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${cor}" stroke-width="5" stroke-linecap="butt"/>`;
+  s += `<line x1="${x-5}" y1="${y1}" x2="${x+5}" y2="${y1}" stroke="${cor}" stroke-width="1"/>`;
+  if(Math.abs(y2-y1)>11) s += `<text x="${tx}" y="${(y1+y2)/2+4}" font-size="11" text-anchor="${an}" fill="${cor}" font-weight="600">${txt}</text>`;
+  return s;
+}
+
+function desenhar(i, r){
+  const svg = $("cena");
+  if(!r || r.erros.length){ svg.innerHTML=""; $("fala").textContent=""; return; }
+  const W=560, Ht=520, top=34, bot=28, sis=i.sistema, ret=sis==="ret", lvh=sis==="lvh";
+  const feet0 = i.d + i.hD;
+  const dMin = Math.min(0, i.d - 0.55) - 0.4;
+  const dMax = Math.max(i.H, r.ZLQ, r.parada) + 0.6;
+  const s = (Ht-top-bot)/(dMax-dMin);
+  const y = v => top + (v-dMin)*s;
+  const cor = CORES[r.nZ];
+  const ax = 300;
+  const offPx = i.X>0 ? Math.min(Math.max(i.X*s, 60), 240) : 125;
+  const wx = ax - offPx, kx = i.X>0 ? offPx/i.X : s;
+  const edge = Math.min(wx + Math.max(0.45*s, 28), ax - 22);
+  const defl = lvh ? (i.Dlv||0) : 0;
+  let o = "";
+
+  // piso
+  o += `<rect x="0" y="${y(i.H)}" width="${W}" height="${Ht-y(i.H)}" fill="var(--gnd)" opacity=".55"/>`;
+  o += `<line x1="0" y1="${y(i.H)}" x2="${W}" y2="${y(i.H)}" stroke="var(--str)" stroke-width="2"/>`;
+  o += `<text x="10" y="${y(i.H)+16}" font-size="12" fill="var(--tx)" font-weight="600">Piso / 1º obstáculo</text>`;
+
+  // área de isolamento abaixo (queda de ferramentas)
+  const isoD = calcIso(i);
+  { const xc = Math.min(Math.max(wx + 0.2*s, 30), 440), rp = isoD.raio*s, yg = y(i.H);
+    const x1 = Math.max(4, xc-rp), x2 = Math.min(W-40, xc+rp);
+    o += `<rect x="${x1}" y="${yg-5}" width="${x2-x1}" height="5" fill="#f28c28" opacity=".45"/>`;
+    const k = 38/103, wIc = 220*k, desenhoIso = isoDesenho(i.tipoIso);
+    [x1, x2].forEach(xe=>{ o += `<g transform="translate(${xe-wIc/2},${yg-103*k}) scale(${k})">${desenhoIso}</g>`; });
+    o += `<text x="${(x1+x2)/2}" y="${yg+30}" font-size="10" text-anchor="middle" fill="#b85a10" font-weight="700">Isolar ${fmt(isoD.raio)} m ao redor da projeção</text>`; }
+
+  // plataforma de trabalho
+  const yp = y(feet0);
+  if(feet0 < i.H){
+    o += `<rect x="0" y="${yp}" width="${edge}" height="9" fill="var(--str)"/>`;
+    o += `<line x1="${edge}" y1="${yp}" x2="${edge}" y2="${y(i.H)}" stroke="var(--str)" stroke-width="3" stroke-dasharray="2 4" opacity=".6"/>`;
+    o += `<text x="10" y="${yp+24}" font-size="11" fill="var(--mut)">Nível de trabalho</text>`;
+  }
+
+  // ancoragem por sistema
+  const y0 = y(0);
+  let saida = y0;                                  // ponto de onde sai o cabo/talabarte
+  if(lvh){
+    const p1 = Math.max(20, wx-45), p2 = ax+120;
+    o += `<rect x="${p1-4}" y="${y0-26}" width="8" height="30" fill="var(--str)"/><rect x="${p2-4}" y="${y0-26}" width="8" height="30" fill="var(--str)"/>`;
+    o += `<line x1="${p1}" y1="${y0}" x2="${p2}" y2="${y0}" stroke="#7a5cc7" stroke-width="2.5"/>`;
+    if(defl>0) o += `<polyline points="${p1},${y0} ${ax},${y(defl)} ${p2},${y0}" fill="none" stroke="#7a5cc7" stroke-width="1.6" stroke-dasharray="5 4" opacity=".9"/>`;
+    o += `<text x="${(p1+p2)/2}" y="${y0-8}" font-size="11" text-anchor="middle" fill="#7a5cc7" font-weight="600">Linha de vida</text>`;
+  } else {
+    o += `<rect x="${ax-34}" y="${y0-22}" width="68" height="12" fill="var(--str)"/>`;
+    o += `<line x1="${ax}" y1="${y0-10}" x2="${ax}" y2="${y0-4}" stroke="var(--str)" stroke-width="3"/>`;
+    if(ret){
+      o += `<rect x="${ax-9}" y="${y0-4}" width="18" height="20" rx="4" fill="var(--str)"/>`;
+      saida = y0 + 16;
+      o += `<text x="${ax+40}" y="${y0-12}" font-size="11" fill="var(--tx)" font-weight="600">Trava-quedas retrátil</text>`;
+    } else {
+      o += `<circle cx="${ax}" cy="${y0}" r="5" fill="none" stroke="var(--pri)" stroke-width="3"/>`;
+      o += `<text x="${ax+40}" y="${y0-12}" font-size="11" fill="var(--tx)" font-weight="600">Ponto de ancoragem</text>`;
+    }
+  }
+
+  // trabalhador antes da queda
+  const p0 = pessoa(wx, yp, s, "var(--mut)", false, i.hD);
+  o += `<g opacity=".75">${p0.svg}</g>`;
+  if(ret){
+    o += `<line x1="${ax}" y1="${saida}" x2="${wx}" y2="${p0.ring}" stroke="#2f6fd0" stroke-width="2"/>`;
+  } else {
+    const axi = lvh ? wx + i.X*kx*(i.X>0?1:0) : ax;
+    const dist = Math.hypot(axi-wx, p0.ring-y0)/s, sag = Math.max(0, i.L - dist)*s*0.7;
+    o += `<path d="M${axi},${y0} Q${(axi+wx)/2+(axi===wx?14:0)},${(y0+p0.ring)/2+sag} ${wx},${p0.ring}" stroke="#2f6fd0" stroke-width="2.5" fill="none"/>`;
+  }
+  o += `<text x="${wx-0.3*s-6}" y="${yp-1.3*s}" font-size="11" text-anchor="end" fill="var(--mut)">Antes</text>`;
+  if(i.X>0){
+    const yx = yp + 22;
+    o += `<line x1="${wx}" y1="${yx}" x2="${ax}" y2="${yx}" stroke="var(--pri)" stroke-width="1.2" marker-start="url(#pt)" marker-end="url(#pt)"/>`;
+    o += `<text x="${(wx+ax)/2}" y="${yx-4}" font-size="10" text-anchor="middle" fill="var(--pri)" font-weight="700">X ${fmt(i.X)} m</text>`;
+  }
+
+  // posição final
+  const colide = r.parada > i.H;
+  const feetF = colide ? i.H : r.parada, ringF = feetF - i.hD;
+  const yFeetF = y(feetF), yRingF = y(ringF);
+
+  // trajetória / balanço
+  if(i.X>0){
+    o += `<path d="M${wx},${p0.ring} Q${wx},${yRingF} ${ax-8},${yRingF}" stroke="var(--mut)" stroke-width="1.4" stroke-dasharray="5 4" fill="none" marker-end="url(#seta)"/>`;
+    const xb = Math.min(ax + offPx, 445);
+    o += `<path d="M${ax+8},${yRingF} Q${xb},${yRingF} ${xb},${p0.ring}" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="2 5" fill="none" opacity=".8"/>`;
+    o += `<text x="${xb+5}" y="${(yRingF+p0.ring)/2}" font-size="10" fill="var(--mut)">balanço</text>`;
+  } else {
+    o += `<path d="M${wx+20},${yp-0.8*s} C${edge+20},${yp-0.6*s} ${ax-40},${yFeetF-1.2*s} ${ax-18},${yFeetF-0.9*s}" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="4 4" fill="none" marker-end="url(#seta)"/>`;
+  }
+
+  // conexão após a queda
+  if(ret){
+    o += `<line x1="${ax}" y1="${saida}" x2="${ax}" y2="${yRingF}" stroke="#2f6fd0" stroke-width="2.5"/>`;
+    const yDf1 = y(Math.min(r.R0, ringF)), yDf2 = yRingF;
+    o += `<line x1="${ax}" y1="${yDf1}" x2="${ax}" y2="${yDf2}" stroke="#e8771e" stroke-width="4" stroke-dasharray="6 3"/>`;
+  } else {
+    const ext = sis==="sem" ? 0 : i.A;
+    const yIni = y(defl), yL = y(Math.min(defl + i.L, ringF)), yX = yRingF;
+    o += `<line x1="${ax}" y1="${yIni}" x2="${ax}" y2="${yL}" stroke="#2f6fd0" stroke-width="3"/>`;
+    if(ext>0 && yX-yL>3){
+      const n = Math.max(3, Math.round((yX-yL)/6)); let zz=`M${ax},${yL}`;
+      for(let k=1;k<=n;k++) zz += ` L${ax+(k%2?6:-6)},${yL+(yX-yL)*k/n}`;
+      o += `<path d="${zz}" stroke="#e8771e" stroke-width="2.5" fill="none"/>`;
+    }
+  }
+  const corF = colide ? "var(--cr)" : "var(--tx)";
+  o += pessoa(ax, yFeetF, s, corF, true, i.hD).svg;
+  o += `<text x="${ax+0.35*s+6}" y="${yFeetF-0.9*s}" font-size="11" fill="var(--tx)">Após a queda</text>`;
+  o += `<text x="${ax+0.35*s+6}" y="${yFeetF-0.9*s+13}" font-size="10" fill="var(--mut)">(pior caso)</text>`;
+  if(colide){
+    const yi=y(i.H);
+    o += `<polygon points="${ax-26},${yi} ${ax-12},${yi-12} ${ax-4},${yi-24} ${ax+6},${yi-12} ${ax+22},${yi-16} ${ax+14},${yi} " fill="var(--cr)" opacity=".85"/>`;
+    o += `<text x="10" y="${yi+38}" font-size="15" fill="var(--cr)" font-weight="700">COLISÃO COM O PISO</text>`;
+    o += `<text x="10" y="${yi+56}" font-size="12" fill="var(--cr)">Faltam ${fmt(r.parada-i.H)} m de altura</text>`;
+  }
+
+  // cotas: ZLQ empilhada e H
+  const cx = 470; let acc = 0;
+  r.segs.forEach(([nm,v,c])=>{ o += cotaV(cx, y(acc), y(acc+v), c, nm+" "+fmt(v), "e"); acc += v; });
+  o += `<text x="${cx}" y="${y(0)-26}" font-size="11" text-anchor="middle" fill="${cor}" font-weight="700">ZLQ ${fmt(r.ZLQ)} m</text>`;
+  const hx = 525;
+  o += `<line x1="${hx}" y1="${y(0)}" x2="${hx}" y2="${y(i.H)}" stroke="var(--tx)" stroke-width="1.5" marker-start="url(#pt)" marker-end="url(#pt)"/>`;
+  o += `<text x="${hx+4}" y="${(y(0)+y(i.H))/2}" font-size="12" fill="var(--tx)" font-weight="700" transform="rotate(-90 ${hx+12} ${(y(0)+y(i.H))/2})" text-anchor="middle">H ${fmt(i.H)} m</text>`;
+  o += `<line x1="${ax+30}" y1="${y(r.ZLQ)}" x2="${cx+5}" y2="${y(r.ZLQ)}" stroke="${cor}" stroke-width="1.5" stroke-dasharray="5 3"/>`;
+
+  // selo de status
+  o += `<rect x="10" y="8" width="190" height="24" rx="12" fill="${CORES[r.geral]}"/>`;
+  o += `<text x="105" y="25" font-size="12" text-anchor="middle" fill="#fff" font-weight="700">${NIVEIS[r.geral].toUpperCase()}</text>`;
+
+  const defs = `<defs><marker id="seta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--mut)"/></marker>
+  <marker id="pt" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--tx)"/></marker></defs>`;
+  svg.innerHTML = defs + o;
+
+  const Fk = r.Fmax==null ? null : r.Fmax/1000;
+  let t = ret ? `Se cair, o retrátil trava em até <b>${fmt(i.Df)} m</b> (distância de frenagem do fabricante).`
+              : `Se cair, o trabalhador tem <b>${fmt(r.QL)} m</b> de queda livre` + (lvh && defl>0 ? ` e a linha de vida cede <b>${fmt(defl)} m</b>.` : ".");
+  if(i.X>0) t += ` Como a ancoragem está afastada ${fmt(i.X)} m da vertical, ele balança: desce mais <b>${fmt(r.dropPend)} m</b> e passa pela vertical a cerca de <b>${fmt(r.vLat,1)} m/s</b>` + ".";
+  t += ` No pior caso ele para com os pés a <b>${fmt(r.parada)} m</b> abaixo da ancoragem`;
+  if(!ret && sis!=="sem" && r.x!=null && r.x<i.A) t += `; para esta massa e altura de queda a estimativa é <b>${fmt(r.paradaEst)} m</b>`;
+  t += ". ";
+  t += colide ? `<b style="color:var(--cr)">Ele bate no piso: faltam ${fmt(r.parada-i.H)} m.</b> ` :
+       r.sobra < i.S ? `<b style="color:var(--na)">Sobram só ${fmt(r.sobra)} m até o piso, menos que a margem de ${fmt(i.S)} m.</b> ` :
+       `Sobram <b>${fmt(r.sobra)} m</b> até o piso (margem mínima: ${fmt(i.S)} m). `;
+  if(Fk!=null) t += `O corpo recebe até <b>${fmt(Fk,1)} kN</b> (${fmt(r.Fmax/(i.m*G),1)} vezes o próprio peso).`;
+  $("fala").innerHTML = t;
+}
+
+let ultimo = null;
+function visibilidade(sis){
+  const ret = sis==="ret";
+  $("grpL").classList.toggle("hide", ret);
+  $("grpDf").classList.toggle("hide", !ret);
+  $("grpDlv").classList.toggle("hide", sis!=="lvh");
+  $("grpA").classList.toggle("hide", ret || sis==="sem");
+  $("grpRa").classList.toggle("hide", ret || sis==="sem");
+  $("grpLig").classList.toggle("hide", sis==="sem");
+  $("lblLig").innerHTML = ret ? "Retrátil <small>cadastro</small>" : "Talabarte / absorvedor <small>cadastro</small>";
+  $("lblCt").innerHTML = ret ? "Capacidade do retrátil <small>kg</small>" : "Capacidade talabarte/absorvedor <small>kg</small>";
+  $("lblD").innerHTML = ret ? "Retrátil acima do engate dorsal (d) <small>m, negativo se abaixo</small>"
+    : sis==="lvh" ? "Linha de vida acima do engate dorsal (d) <small>m, negativo se abaixo</small>"
+    : "Ancoragem acima do engate dorsal (d) <small>m, negativo se abaixo</small>";
+}
+function atualizar(){
+  const i = ler();
+  visibilidade(i.sistema);
+  const fora = $("fora");
+  const avisos = [];
+  if(i.sistema==="lvh") avisos.push("Linha de vida horizontal: use a deflexão máxima do projeto da linha, para o número de trabalhadores conectados. O app soma essa deflexão à ZLQ e à queda; a força que a linha transmite à ancoragem não é calculada aqui.");
+  if(i.sistema==="ret") avisos.push("Trava-quedas retrátil: a distância de frenagem (Df) do manual já inclui o travamento. O cálculo considera o retrátil na vertical do trabalhador; com o retrátil deslocado para o lado há queda pendular e a ZLQ aumenta.");
+  fora.classList.toggle("hide", !avisos.length); fora.innerHTML = avisos.join("<br>");
+
+  const r = calcular(i);
+  ultimo = {i, r};
+  const fb = $("fqBox");
+  if(i.sistema==="ret" && isFinite(i.d)){
+    const n = i.d>0 ? 0 : 3;
+    fb.innerHTML = `<div><div>Fator de queda <span class="f">(não se aplica)</span></div><div class="f">No retrátil o cabo fica sempre esticado; o que importa é o retrátil estar acima do engate dorsal.</div></div><div style="text-align:right">${badge(n)}</div>`;
+  } else if(isFinite(i.d) && i.L>0){
+    const QL = Math.max(0, i.L - i.d), FQ = QL / i.L, n = FQ<=1?0:FQ<=2?1:3;
+    const txt = FQ===0 ? "sem queda livre" : FQ<=1 ? "ancoragem no engate ou acima" : FQ<=2 ? "ancoragem abaixo do engate" : "acima de 2: inaceitável";
+    fb.innerHTML = `<div><div>Fator de queda <span class="f">(calculado)</span></div><div class="f">QL = L − d = ${fmt(i.L)} − (${fmt(i.d)}) = ${fmt(QL)} m · FQ = ${fmt(QL)} / ${fmt(i.L)}</div><div class="f">${txt}</div></div><div style="text-align:right"><div class="v" style="color:${CORES[n]}">${fmt(FQ)}</div>${badge(n)}</div>`;
+  } else fb.innerHTML = "<span class='f'>Informe d e L para calcular o fator de queda.</span>";
+
+
+  if(r.erros.length){
+    $("verdict").className="verdict l2";
+    $("verdict").innerHTML = "<h2>Dados inválidos</h2><p>Confira os campos: "+[...new Set(r.erros)].join(", ")+".</p>";
+    ["tRes","tCrit","rec","bars","tForca"].forEach(k=>$(k).innerHTML=""); desenhar(i,r); return;
+  }
+  $("verdict").className = "verdict l"+r.geral;
+  $("verdict").innerHTML = `<h2>${NIVEIS[r.geral]}</h2><p>${DESC[r.geral]}</p>`;
+
+  const Fk = r.Fmax==null ? null : r.Fmax/1000, Fs = r.Fsem==null ? null : r.Fsem/1000;
+  const esc = Math.max(10, (Fk||0)*1.1, (Fs||0)*1.05);
+  const barra = (nome,v,c) => `<div class="b"><div>${nome}</div><div class="trk"><div class="fill" style="width:${Math.min(100,(v||0)/esc*100)}%;background:${c}"></div><div class="lim" style="left:${6/esc*100}%" title="6 kN"></div></div><div style="text-align:right"><b>${v==null?"–":fmt(v,1)+" kN"}</b></div></div>`;
+  let bh = "";
+  if(i.sistema!=="sem") bh += barra("Com este sistema", Fk, CORES[r.nF]);
+  if(Fs!=null) bh += barra("Sem absorvedor (comparação)", Fs, "var(--cr)");
+  bh += `<p class="note" style="margin:4px 0 0">Linha vermelha: limite de 6 kN da NR-35.</p>`;
+  $("bars").innerHTML = bh;
+  $("tForca").innerHTML = tabelaHTML(linhasForca(i, r));
+  $("tRes").innerHTML = tabelaHTML(linhasRes(i, r));
+  $("tCrit").innerHTML = `<tr><th>Critério</th><th>Situação</th><th>Detalhe</th></tr>` + linhasCrit(i, r).map(([a,n,d])=>`<tr><td>${a}</td><td>${badge(n)}</td><td>${d}</td></tr>`).join("");
+  $("rec").innerHTML = r.rec.map(t=>`<li>${t}</li>`).join("");
+  const isoV = calcIso(i);
+  $("isoFigBox").innerHTML = figuraIso(i.tipoIso) + `<p class="note" style="text-align:center;margin:2px 0 0"><b>${ISO[i.tipoIso].nome}</b>${ISO[i.tipoIso].fis?" · barreira física":" · delimitação/sinalização"}</p>`;
+  $("tIso").innerHTML = tabelaHTML(linhasIso(i, isoV));
+  $("isoNota").textContent = ISO[i.tipoIso].nota;
+  desenhar(i, r);
+  try{ localStorage.setItem("zlq_atual2", JSON.stringify(i)); }catch(e){}
+}
+
+function relatorio(){
+  if(!ultimo || ultimo.r.erros.length) return "";
+  const {i,r} = ultimo, sem = s => String(s).replace(/<[^>]+>/g,"");
+  let t = `RELATÓRIO ZLQ FÁCIL\n${i.nome||"Cenário sem nome"} · ${new Date().toLocaleString("pt-BR")}\n\nRESULTADO GERAL: ${NIVEIS[r.geral].toUpperCase()}\n\nDADOS\n`;
+  linhasDados(i).forEach(([a,b])=> t += `${a}: ${b}\n`);
+  t += `\nRESULTADOS\n`; linhasRes(i,r).forEach(([a,b])=> t += `${a}: ${b}\n`);
+  t += `\nFORÇA\n`; linhasForca(i,r).forEach(([a,b])=> t += `${a}: ${b}\n`);
+  if(r.Fsem!=null) t += `Sem absorvedor (comparação): ${fmt(r.Fsem/1000,1)} kN\n`;
+  t += `\nISOLAMENTO DA ÁREA ABAIXO\n`; linhasIso(i, calcIso(i)).forEach(([a,b])=> t += `${a}: ${b}\n`);
+  t += `\nCRITÉRIOS\n`; linhasCrit(i,r).forEach(([a,n,d])=> t += `${a}: ${NIVEIS[n]} (${d})\n`);
+  t += `\nVERIFICAÇÕES DE CAMPO\n`;
+  const nome = {p:"Pendente",s:"Conforme",n:"Não conforme",na:"Não se aplica"};
+  CHECKS.forEach(([k,txt])=> t += `- ${txt}: ${nome[(i.chk||{})[k]||"p"]}\n`);
+  t += `\nRECOMENDAÇÕES\n`; r.rec.forEach(x=> t += "- "+sem(x)+"\n");
+  t += `\nEstimativa para apoio à Análise de Risco (NR-35 / ABNT NBR 16489). Não substitui dados do fabricante, CA do equipamento nem avaliação do profissional qualificado.`;
+  return t;
+}
+
+// ---------- isolamento da área abaixo (queda de ferramentas e materiais) ----------
+const ISO = {
+  cerquite: {nome:"Cerquite / tela plástica", fis:true, nota:"Barreira física leve e contínua. Boa para áreas amplas e temporárias; fixe as bases contra vento e não deixe vãos entre os painéis."},
+  pedestal: {nome:"Pedestal com corrente ou fita", fis:false, nota:"Delimita e orienta a circulação, mas é fácil de transpor. Use onde há pouco fluxo de pessoas e com sinalização de advertência."},
+  cone: {nome:"Cones com corrente", fis:false, nota:"Delimitação rápida para áreas pequenas e de curta duração. Não impede a passagem; combine com vigia ou sinalização."},
+  guarda: {nome:"Guarda-corpo / grade metálica", fis:true, nota:"Barreira física rígida. Indicada para áreas de circulação intensa e atividades longas."},
+  tapume: {nome:"Tapume", fis:true, nota:"Barreira física fechada que também retém materiais que rolam ou ricocheteiam. Indicada para obras e atividades longas."},
+  fita: {nome:"Fita zebrada", fis:false, nota:"Apenas sinalização: não é barreira. Sozinha, só para atividades muito curtas e com vigia."}
+};
+function figuraIso(t){
+  const pos = (x,h=70,c="#56606e") => `<rect x="${x-3}" y="${100-h}" width="6" height="${h}" fill="${c}"/><rect x="${x-10}" y="98" width="20" height="5" rx="2" fill="${c}"/>`;
+  return `<svg id="isoFig" viewBox="0 0 220 120" width="100%" role="img" aria-label="${ISO[t].nome}" style="max-width:300px;display:block;margin:6px auto;background:#eef4fb;border-radius:8px"><rect x="0" y="103" width="220" height="17" fill="#c9ced6"/>${isoDesenho(t)}</svg>`;
+}
+function isoDesenho(t){
+  const pos = (x,h=70,c="#56606e") => `<rect x="${x-3}" y="${100-h}" width="6" height="${h}" fill="${c}"/><rect x="${x-10}" y="98" width="20" height="5" rx="2" fill="${c}"/>`;
+  let g = "";
+  if(t==="cerquite"){
+    g += pos(20)+pos(110)+pos(200);
+    let m=""; for(let x=24;x<=184;x+=12){ m+=`<line x1="${x}" y1="34" x2="${x+12}" y2="98" stroke="#f28c28" stroke-width="2"/><line x1="${x+12}" y1="34" x2="${x}" y2="98" stroke="#f28c28" stroke-width="2"/>`; }
+    g += m + `<rect x="20" y="32" width="180" height="66" fill="none" stroke="#e8771e" stroke-width="3"/>`;
+  } else if(t==="pedestal"){
+    g += pos(30,62,"#1d2330")+pos(110,62,"#1d2330")+pos(190,62,"#1d2330");
+    g += `<path d="M30,42 Q70,60 110,42 Q150,60 190,42" fill="none" stroke="#f2c200" stroke-width="5" stroke-dasharray="8 6"/><path d="M30,42 Q70,60 110,42 Q150,60 190,42" fill="none" stroke="#1d2330" stroke-width="5" stroke-dasharray="8 6" stroke-dashoffset="7"/>`;
+  } else if(t==="cone"){
+    const cone = x => `<polygon points="${x-14},101 ${x+14},101 ${x+4},44 ${x-4},44" fill="#f28c28"/><rect x="${x-9}" y="62" width="18" height="7" fill="#fff"/><rect x="${x-12}" y="80" width="24" height="7" fill="#fff"/><rect x="${x-18}" y="99" width="36" height="5" fill="#d0661a"/>`;
+    g += cone(30)+cone(110)+cone(190);
+    g += `<path d="M34,48 Q72,66 106,48 M114,48 Q152,66 186,48" fill="none" stroke="#c53030" stroke-width="3"/>`;
+  } else if(t==="guarda"){
+    g += pos(20,72,"#8a939f")+pos(110,72,"#8a939f")+pos(200,72,"#8a939f");
+    g += `<rect x="20" y="28" width="180" height="6" fill="#8a939f"/><rect x="20" y="60" width="180" height="5" fill="#8a939f"/><rect x="20" y="86" width="180" height="12" fill="#f2c200"/>`;
+  } else if(t==="tapume"){
+    for(let x=14;x<206;x+=48) g += `<rect x="${x}" y="24" width="46" height="78" fill="#dfe3ea" stroke="#8a939f" stroke-width="2"/>`;
+    g += `<rect x="14" y="56" width="192" height="12" fill="#f2c200"/>`;
+  } else {
+    g += pos(30,58)+pos(190,58);
+    let z=""; for(let x=30;x<190;x+=16) z+=`<rect x="${x}" y="44" width="8" height="10" fill="#c53030"/><rect x="${x+8}" y="44" width="8" height="10" fill="#fff"/>`;
+    g += z + `<rect x="30" y="44" width="160" height="10" fill="none" stroke="#c53030"/>`;
+  }
+  return g;
+}
+function calcIso(i){
+  const hAuto = Math.max(0, i.H - (i.d + i.hD));
+  const h = i.Hat>0 ? i.Hat : hAuto;
+  const raio = (i.fIso>0 ? i.fIso : 0.3) * h;
+  return {h, auto: !(i.Hat>0), raio, area: Math.PI*raio*raio, faixa: 2*raio};
+}
+function linhasIso(i, iso){
+  return [
+    ["Altura da atividade em relação ao piso", fmt(iso.h)+" m"+(iso.auto?" (calculada: H − d − hD)":"")],
+    ["Raio de isolamento ("+fmt(i.fIso,2)+" × altura)", fmt(iso.raio)+" m"],
+    ["Área aproximada (círculo de raio "+fmt(iso.raio)+" m)", fmt(iso.area,1)+" m²"],
+    ["Tipo de isolamento", ISO[i.tipoIso].nome+(ISO[i.tipoIso].fis?" (barreira física)":" (delimitação/sinalização)")]
+  ];
+}
+
+function toast(m){ const el=$("toast"); el.textContent=m; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1800); }
+
+let memLista = [];
+function lerLista(){ try{ return JSON.parse(localStorage.getItem("zlq_cen")||"[]"); }catch(e){ return memLista; } }
+function gravarLista(l){ memLista=l; try{ localStorage.setItem("zlq_cen", JSON.stringify(l)); }catch(e){} }
+function itemLista(c, r, extra, botoes){
+  return `<div class="it"><div class="itn">${(c.nome||"Sem nome").replace(/</g,"&lt;")}${extra?`<div class="note">${extra}</div>`:""}
+    <div class="itm">H ${fmt(c.H)} m · ZLQ ${fmt(r.ZLQ)} m · FQ ${fmt(r.FQ)} · ${r.Fmax==null?"força não controlada":fmt(r.Fmax/1000,1)+" kN"}</div></div>
+    <div class="itb">${badge(r.geral)}<div>${botoes}</div></div></div>`;
+}
+function renderLista(){
+  const l = lerLista();
+  if(!l.length){ $("lista").innerHTML = "<p class='note'>Nenhum cenário salvo ainda.</p>"; return; }
+  let h = "";
+  l.forEach((c,k)=>{
+    c = Object.assign({}, PADRAO, c);
+    const r = calcular(c);
+    if(r.erros.length) return;
+    h += itemLista(c, r, c.data||"", `<button class="btn sec" data-ab="${k}">Abrir</button> <button class="btn sec" data-ex="${k}">Excluir</button>`);
+  });
+  $("lista").innerHTML = h;
+}
+$("lista").addEventListener("click", e=>{
+  const ab=e.target.dataset.ab, ex=e.target.dataset.ex, l=lerLista();
+  if(ab!==undefined){ escrever(Object.assign({}, PADRAO, l[ab])); atualizar(); trocar("calc"); }
+  if(ex!==undefined){ l.splice(ex,1); gravarLista(l); renderLista(); }
+});
+$("bSalvar").onclick = ()=>{ const i=ler(); i.data=new Date().toLocaleString("pt-BR"); const l=lerLista(); l.unshift(i); gravarLista(l.slice(0,50)); toast("Cenário salvo"); };
+$("bCopiar").onclick = async ()=>{ try{ await navigator.clipboard.writeText(relatorio()); toast("Relatório copiado"); }catch(e){ toast("Não foi possível copiar"); } };
+$("bLimpar").onclick = ()=>{ escrever(PADRAO); atualizar(); };
+$("bTela").onclick = async ()=>{
+  const c=$("cenaCard");
+  try{ if(document.fullscreenElement) await document.exitFullscreen(); else await c.requestFullscreen(); }catch(e){ toast("Tela cheia não disponível aqui"); }
+};
+
+
+// ---------- cadastro de EPIs (tela) ----------
+const escH = t => String(t==null?"":t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const TIPO_EPI = {cinto:"Cinturão", tal:"Talabarte com absorvedor", ret:"Trava-quedas retrátil"};
+function popularEpis(){
+  const l = lerEpis(), sis = $("sistema").value, vc = $("epiCinto").value, vl = $("epiLig").value;
+  const op = e => `<option value="${escH(e.id)}">${escH(descEpi(e))}</option>`;
+  $("epiCinto").innerHTML = `<option value="">Informar capacidade manualmente</option>` + l.filter(e=>e.tipo==="cinto").map(op).join("");
+  const tipo = sis==="ret" ? "ret" : "tal";
+  $("epiLig").innerHTML = `<option value="">Informar dados manualmente</option>` + l.filter(e=>e.tipo===tipo).map(op).join("");
+  if(l.some(e=>e.id===vc && e.tipo==="cinto")) $("epiCinto").value = vc;
+  if(l.some(e=>e.id===vl && e.tipo===tipo)) $("epiLig").value = vl;
+}
+function trava(k, on){ $(k).readOnly = on; $(k).classList.toggle("lock", on); const sl=document.querySelector(`.slider[data-for="${k}"]`); if(sl) sl.disabled = on; }
+function setCap(k, cap){
+  const sel = $(k);
+  if(cap==null){ sel.disabled = false; return; }
+  if(![...sel.options].some(o=>o.value==String(cap))) sel.add(new Option(cap, cap));
+  sel.value = String(cap); sel.disabled = true;
+}
+function aplicarEpi(){
+  const sis = $("sistema").value, c = epiPorId($("epiCinto").value), g = sis==="sem" ? null : epiPorId($("epiLig").value);
+  ["L","A","F","Df"].forEach(k=>trava(k,false));
+  setCap("cc", c ? c.cap : null); setCap("ct", null);
+  const info = [];
+  const valTxt = e => e.val ? (e.val < hojeISO() ? " · CA vencido em " : " · CA válido até ") + e.val.split("-").reverse().join("/") : "";
+  if(c) info.push("Cinturão: "+escH(descEpi(c))+valTxt(c));
+  if(g){
+    if(g.tipo==="tal"){ $("L").value=g.L; $("A").value=g.A; $("F").value=g.Fm; ["L","A","F"].forEach(k=>{ trava(k,true); syncSlider(k); }); }
+    if(g.tipo==="ret"){ $("Df").value=g.Df; $("F").value=g.Fm; ["Df","F"].forEach(k=>trava(k,true)); }
+    setCap("ct", g.cap);
+    info.push((g.tipo==="ret"?"Retrátil: ":"Talabarte: ")+escH(descEpi(g))+valTxt(g));
+  }
+  const venc = [c,g].filter(e=>e && e.val && e.val < hojeISO());
+  $("epiInfo").innerHTML = info.join("<br>") + (venc.length?`<br><b style="color:var(--at)">Atenção: CA vencido no cadastro.</b>`:"") + (info.length?"<br>Campos travados vêm do cadastro.":"");
+}
+function formTipo(){
+  const t = $("eTipo").value, rows = document.querySelectorAll(".eTal");
+  rows[0].classList.toggle("hide", t!=="tal");
+  rows[1].classList.toggle("hide", t==="cinto");
+  $("eDf").parentElement.classList.toggle("hide", t!=="ret");
+}
+function limparForm(){ ["eId","eFab","eMod","eCa","eVal"].forEach(k=>$(k).value=""); $("eCap").value=100; $("eL").value=1.5; $("eA").value=1.75; $("eFm").value=6; $("eDf").value=2; $("eSalvar").textContent="Salvar EPI"; formTipo(); }
+function renderEpis(){
+  const l = lerEpis();
+  if(!l.length){ $("eLista").innerHTML = "<p class='note'>Nenhum EPI cadastrado ainda.</p>"; return; }
+  const ordem = {cinto:0, tal:1, ret:2};
+  $("eLista").innerHTML = l.slice().sort((a,b)=>ordem[a.tipo]-ordem[b.tipo]).map(e=>{
+    const venc = e.val && e.val < hojeISO();
+    const dados = e.tipo==="tal" ? `L ${fmt(+e.L)} m · A ${fmt(+e.A)} m · Fm ${fmt(+e.Fm,1)} kN` : e.tipo==="ret" ? `Df ${fmt(+e.Df)} m · Fm ${fmt(+e.Fm,1)} kN` : "";
+    return `<div class="eit"><div><b>${escH(descEpi(e))}</b><div class="note">${TIPO_EPI[e.tipo]} · ${e.cap} kg${dados?" · "+dados:""}${e.val?` · CA até ${e.val.split("-").reverse().join("/")}`:""}${venc?' · <b style="color:var(--at)">vencido</b>':""}</div></div>
+      <div style="white-space:nowrap"><button class="btn sec" data-eed="${escH(e.id)}">Editar</button> <button class="btn sec" data-eex="${escH(e.id)}">Excluir</button></div></div>`;
+  }).join("");
+}
+$("eTipo").addEventListener("change", formTipo);
+$("eNovo").onclick = limparForm;
+$("eSalvar").onclick = ()=>{
+  const t = $("eTipo").value, num = k => parseFloat($(k).value);
+  const e = {id:$("eId").value || ("e"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)), tipo:t,
+    fab:$("eFab").value.trim(), modelo:$("eMod").value.trim(), ca:$("eCa").value.trim(), val:$("eVal").value, cap:num("eCap")};
+  if(!e.fab && !e.modelo){ $("eMsg").textContent = "Informe ao menos o fabricante ou o modelo."; return; }
+  if(!(e.cap>0)){ $("eMsg").textContent = "Informe a capacidade em kg."; return; }
+  if(t==="tal"){ e.L=num("eL"); e.A=num("eA"); e.Fm=num("eFm"); if(!(e.L>0 && e.A>=0 && e.Fm>0)){ $("eMsg").textContent="Confira L, A e Fm."; return; } }
+  if(t==="ret"){ e.Df=num("eDf"); e.Fm=num("eFm"); if(!(e.Df>0 && e.Fm>0)){ $("eMsg").textContent="Confira Df e Fm."; return; } }
+  const l = lerEpis().filter(x=>x.id!==e.id); l.push(e); gravarEpis(l);
+  $("eMsg").textContent = "EPI salvo: "+descEpi(e); limparForm(); renderEpis(); popularEpis(); aplicarEpi(); atualizar();
+};
+$("eLista").addEventListener("click", ev=>{
+  const ed = ev.target.dataset.eed, ex = ev.target.dataset.eex;
+  if(ed){ const e = epiPorId(ed); if(!e) return;
+    $("eId").value=e.id; $("eTipo").value=e.tipo; $("eFab").value=e.fab||""; $("eMod").value=e.modelo||""; $("eCa").value=e.ca||""; $("eVal").value=e.val||""; $("eCap").value=e.cap;
+    if(e.L!=null) $("eL").value=e.L; if(e.A!=null) $("eA").value=e.A; if(e.Fm!=null) $("eFm").value=e.Fm; if(e.Df!=null) $("eDf").value=e.Df;
+    $("eSalvar").textContent="Salvar alterações"; formTipo(); window.scrollTo(0,0); }
+  if(ex){ gravarEpis(lerEpis().filter(x=>x.id!==ex)); renderEpis(); popularEpis(); aplicarEpi(); atualizar(); }
+});
+$("eExp").onclick = async ()=>{
+  const txt = JSON.stringify({app:"ZLQ Fácil", tipo:"cadastro-epis", versao:1, epis:lerEpis()}, null, 2);
+  try{ const blob = new Blob([txt],{type:"application/json"}), url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href=url; a.download="zlq-epis-"+hojeISO()+".json"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),30000); }catch(e){}
+  try{ await navigator.clipboard.writeText(txt); toast("Cadastro exportado e copiado"); }catch(e){ toast("Cadastro exportado"); }
+};
+$("eImp").addEventListener("change", async ev=>{
+  const f = ev.target.files[0]; if(!f) return;
+  try{
+    const d = JSON.parse(await f.text()), novos = Array.isArray(d) ? d : (d.epis||[]);
+    const validos = novos.filter(e=>e && e.id && TIPO_EPI[e.tipo] && e.cap>0);
+    const l = lerEpis().filter(x=>!validos.some(n=>n.id===x.id)).concat(validos);
+    gravarEpis(l); renderEpis(); popularEpis(); aplicarEpi(); atualizar(); toast(validos.length+" EPI(s) importado(s)");
+  }catch(e){ toast("Arquivo inválido"); }
+  ev.target.value="";
+});
+formTipo();
+
+const OK = {anc:"s",vert:"s",borda:"s",insp:"s",comp:"s",resg:"s",aut:"s",isol:"s"};
+const EXEMPLOS = [
+  {nome:"1. Telhado de galpão, ancoragem acima da cabeça", H:7, d:1.0, L:1.5, m:90, F:4.5, chk:OK},
+  {nome:"2. Ancoragem no nível do engate, pé-direito de 6 m", H:6, d:0, L:1.5, m:100, F:6, chk:OK},
+  {nome:"3. Ancoragem nos pés, mezanino de 4,5 m", H:4.5, d:-1.5, L:1.5, m:100, F:6, chk:OK},
+  {nome:"4. Trabalhador de 130 kg com cinto de 100 kg", H:8, d:0.5, L:1.5, m:130, F:6, chk:OK},
+  {nome:"5. Trabalhador de 130 kg, EPI de 140 kg", H:8, d:0.5, L:1.5, m:130, cc:140, ct:140, F:6, chk:OK},
+  {nome:"6. Talabarte sem absorvedor (proibido)", sistema:"sem", H:8, d:0, L:1.5, m:100, chk:OK},
+  {nome:"7. Absorvedor curto com FQ 2 (curso esgota)", H:10, d:-1.5, L:1.8, m:120, cc:140, ct:140, F:4, A:1.0, chk:OK},
+  {nome:"8. Retrátil na vertical, 2 m acima do engate", sistema:"ret", H:6.5, d:2, m:100, F:4.5, Df:1.4, chk:OK},
+  {nome:"9. Retrátil 3 m acima do engate, pé-direito de 6 m", sistema:"ret", H:6, d:3, m:100, F:6, Df:1.4, chk:OK},
+  {nome:"10. Linha de vida horizontal, deflexão de 1,2 m", sistema:"lvh", H:8, d:1.0, L:1.5, m:100, F:4.5, Dlv:1.2, chk:OK}
+];
+function renderExemplos(){
+  $("exemplos").innerHTML = EXEMPLOS.map((c0,k)=>{
+    const c = Object.assign({}, PADRAO, c0), r = calcular(Object.assign({},c));
+    return itemLista(c, r, "", `<button class="btn sec" data-exm="${k}">Abrir</button>`);
+  }).join("");
+}
+$("exemplos").addEventListener("click", e=>{
+  const k=e.target.dataset.exm; if(k===undefined) return;
+  escrever(Object.assign({}, PADRAO, EXEMPLOS[k])); atualizar(); trocar("calc");
+});
+
+function trocar(t){
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on", b.dataset.tab===t));
+  ["calc","cen","epi","edu"].forEach(x=>$("tab-"+x).classList.toggle("hide", x!==t));
+  if(t==="cen"){ renderLista(); renderExemplos(); }
+  if(t==="epi") renderEpis();
+}
+document.querySelectorAll("nav button").forEach(b=> b.onclick=()=>trocar(b.dataset.tab));
+["nome",...NUM].forEach(k=> $(k).addEventListener("input", ()=>{ syncSlider(k); atualizar(); }));
+$("sistema").addEventListener("change", ()=>{ popularEpis(); aplicarEpi(); atualizar(); });
+["epiCinto","epiLig"].forEach(k=> $(k).addEventListener("change", ()=>{ aplicarEpi(); atualizar(); }));
+$("tipoIso").addEventListener("change", atualizar);
+document.querySelectorAll(".slider").forEach(s=> s.addEventListener("input", ()=>{ $(s.dataset.for).value = s.value; atualizar(); }));
+document.querySelectorAll("[data-chk]").forEach(s=> s.addEventListener("change", atualizar));
+
+popularEpis(); aplicarEpi();
+try{ const s = JSON.parse(localStorage.getItem("zlq_atual2")); if(s) escrever(Object.assign({}, PADRAO, s)); }catch(e){}
+atualizar();
+
+// ---------- Relatório PDF, fotos e compartilhamento ----------
+let fotos = [];
+try{ const rr = JSON.parse(localStorage.getItem("zlq_resp")||"{}"); $("resp").value=rr.resp||""; $("reg").value=rr.reg||""; }catch(e){}
+["resp","reg"].forEach(k=> $(k).addEventListener("input", ()=>{ try{ localStorage.setItem("zlq_resp", JSON.stringify({resp:$("resp").value, reg:$("reg").value})); }catch(e){} }));
+
+function reduzir(file){
+  return new Promise((ok,erro)=>{
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = ()=>{
+      const k = Math.min(1, 1400/Math.max(img.naturalWidth, img.naturalHeight));
+      const cv = document.createElement("canvas"); cv.width=Math.round(img.naturalWidth*k); cv.height=Math.round(img.naturalHeight*k);
+      const g = cv.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,cv.width,cv.height); g.drawImage(img,0,0,cv.width,cv.height);
+      URL.revokeObjectURL(url); ok({url:cv.toDataURL("image/jpeg",0.8), w:cv.width, h:cv.height});
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); erro(new Error("imagem")); };
+    img.src = url;
+  });
+}
+function renderFotos(){
+  $("thumbs").innerHTML = fotos.map((f,k)=>`<div><img src="${f.url}" alt="Foto ${k+1}"><button data-rm="${k}" aria-label="Remover">×</button></div>`).join("");
+}
+$("thumbs").addEventListener("click", e=>{ const k=e.target.dataset.rm; if(k!==undefined){ fotos.splice(k,1); renderFotos(); } });
+$("foto").addEventListener("change", async e=>{
+  for(const f of [...e.target.files]){ if(fotos.length>=3) break; try{ fotos.push(await reduzir(f)); }catch(err){ toast("Não foi possível ler a imagem"); } }
+  e.target.value=""; renderFotos();
+});
+
+const HEX = ["#1e8e4e","#b7791f","#c53030","#7b1111"];
+async function montarPdf(){
+  if(!ultimo || ultimo.r.erros.length) throw new Error("Dados inválidos");
+  const {i,r} = ultimo, D = new ZLQPDF.Doc();
+  const agora = new Date().toLocaleString("pt-BR");
+  D.rect(0, D.H-70, D.W, 70, "#1f4e8c");
+  D.texto("ZLQ Fácil · Relatório de Zona Livre de Queda", D.M, D.H-34, 15, true, "#ffffff");
+  D.texto("Trabalho em altura · NR-35 / ABNT NBR 16489 · "+agora, D.M, D.H-52, 9, false, "#ffffff");
+  D.y = D.H-90;
+  D.par(i.nome || "Cenário sem identificação", 13, true);
+  D.y -= 6; D.espaco(34);
+  D.rect(D.M, D.y-30, D.W-2*D.M, 30, HEX[r.geral]);
+  D.texto("RESULTADO GERAL: "+NIVEIS[r.geral].toUpperCase(), D.M+12, D.y-19.5, 12, true, "#ffffff");
+  D.y -= 36; D.par(DESC[r.geral], 9.5, false, "#3d4555");
+
+  D.titulo("Dados do cenário");
+  D.tabela(linhasDados(i));
+
+  D.titulo("Ilustração do cenário (pior caso)");
+  try{ const im = await ZLQPDF.svgParaJpeg($("cena")); D.imagem(im.url, im.w, im.h, D.W-2*D.M, 330); }
+  catch(e){ D.par("Ilustração indisponível neste aparelho.", 9.5, false, "#5d6677"); }
+  D.par($("fala").textContent, 9.5, false, "#3d4555");
+
+  D.titulo("Resultados");
+  D.tabela(linhasRes(i, r));
+
+  D.titulo("Força máxima no trabalhador");
+  D.tabela(linhasForca(i, r).concat(r.Fsem!=null ? [["Comparação: sem absorvedor", fmt(r.Fsem/1000,1)+" kN"]] : []));
+
+  D.titulo("Classificação por critério");
+  D.tabela(linhasCrit(i, r).map(([a,n,d])=>[a+" ("+d+")", NIVEIS[n]]));
+
+  D.titulo("Isolamento da área abaixo");
+  D.tabela(linhasIso(i, calcIso(i)));
+  try{ const fi = await ZLQPDF.svgParaJpeg($("isoFig"), 3); D.imagem(fi.url, fi.w, fi.h, 220, 120); }catch(e){}
+  D.par(ISO[i.tipoIso].nota, 9, false, "#3d4555");
+
+  D.titulo("Verificações de campo");
+  const nomeC = {p:"Pendente",s:"Conforme",n:"Não conforme",na:"Não se aplica"};
+  D.tabela(CHECKS.map(([k,t])=>[t, nomeC[(i.chk||{})[k]||"p"]]), 0.72);
+
+  D.titulo("Recomendações");
+  r.rec.forEach(t=> D.par("· "+t.replace(/<[^>]+>/g,""), 9.5, false, "#1d2330", 6));
+
+  if(fotos.length){
+    D.espaco(260);
+    D.titulo("Fotos do local");
+    fotos.forEach((f,k)=>{ D.imagem(f.url, f.w, f.h, D.W-2*D.M, 300); D.par("Foto "+(k+1), 8.5, false, "#5d6677"); });
+  }
+
+  D.titulo("Responsável");
+  D.par("Elaborado por: "+($("resp").value||"________________________________")+"    "+($("reg").value||""), 10);
+  D.y -= 26; D.espaco(30);
+  D.linha(D.M, D.y, D.M+250, D.y, "#1d2330", 0.6); D.y -= 12; D.texto("Assinatura", D.M, D.y, 8.5, false, "#5d6677");
+  D.y -= 16;
+  D.par("Fórmulas: QL = L − d; FQ = QL/L; ZLQ = "+formulaZLQ(i)+"; x = m·g·QL/(Fa − m·g); Fa = r·Fm; pendular Δh = R − √(R² − X²), v = √(2·g·Δh); isolamento = fator × altura. Limite de 6 kN: NR-35. Faixas de 10%, 20%, 5,4 kN, 8 kN, velocidades do balanço, margem S e fator de isolamento são critérios internos do app.", 8, false, "#5d6677");
+  D.par("Estimativa para apoio à Análise de Risco. Não substitui os dados do fabricante, o CA do equipamento nem a avaliação do profissional qualificado.", 8, true, "#5d6677");
+  D.rodape("ZLQ Fácil · "+(i.nome||"Cenário")+" · "+agora);
+  return D.gerar();
+}
+function nomeArq(){ const n=(ultimo&&ultimo.i.nome||"cenario").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zA-Z0-9]+/g,"-").replace(/^-|-$/g,"").toLowerCase()||"cenario"; return "ZLQ-"+n+"-"+new Date().toISOString().slice(0,10)+".pdf"; }
+const NATIVO = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+function blobParaBase64(blob){ return new Promise((ok,erro)=>{ const fr=new FileReader(); fr.onload=()=>ok(String(fr.result).split(",")[1]); fr.onerror=erro; fr.readAsDataURL(blob); }); }
+async function compartilharNativo(blob){
+  const {Filesystem, Share} = window.Capacitor.Plugins;
+  const arq = await Filesystem.writeFile({path:nomeArq(), data:await blobParaBase64(blob), directory:"CACHE"});
+  await Share.share({title:"Relatório ZLQ", text:"Relatório de Zona Livre de Queda", files:[arq.uri], dialogTitle:"Enviar relatório"});
+}
+$("bPdf").onclick = async ()=>{
+  $("pdfMsg").textContent = "Gerando...";
+  try{
+    if(NATIVO){ await compartilharNativo(await montarPdf()); $("pdfMsg").textContent = "PDF gerado: "+nomeArq(); return; }
+    const blob = await montarPdf(), url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href=url; a.download=nomeArq(); document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 60000);
+    $("pdfMsg").textContent = "PDF gerado: "+nomeArq();
+  }catch(e){ $("pdfMsg").textContent = "Não foi possível gerar o PDF ("+e.message+")."; }
+};
+$("bShare").onclick = async ()=>{
+  try{
+    if(NATIVO){ await compartilharNativo(await montarPdf()); $("pdfMsg").textContent=""; return; }
+    const blob = await montarPdf(), file = new File([blob], nomeArq(), {type:"application/pdf"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:"Relatório ZLQ", text:"Relatório de Zona Livre de Queda"}); $("pdfMsg").textContent=""; }
+    else { $("pdfMsg").textContent = "Este navegador não compartilha arquivos. Use \"Gerar PDF\" e envie o arquivo baixado."; }
+  }catch(e){ if(e.name!=="AbortError") $("pdfMsg").textContent = "Não foi possível compartilhar ("+e.message+")."; }
+};
+
+// ---------- Termos (primeiro uso) ----------
+try{ if(localStorage.getItem("zlq_termos")!=="1.0") $("modal").classList.remove("hide"); }catch(e){ $("modal").classList.remove("hide"); }
+$("bAceito").onclick = ()=>{ try{ localStorage.setItem("zlq_termos","1.0"); }catch(e){} $("modal").classList.add("hide"); };
+
+// ---------- Offline ----------
+if("serviceWorker" in navigator && location.protocol.startsWith("http") && !NATIVO){
+  window.addEventListener("load", ()=> navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+function statusRede(){ $("statusOff").textContent = navigator.onLine ? "" : "Sem internet: funcionando offline"; }
+window.addEventListener("online", statusRede); window.addEventListener("offline", statusRede); statusRede();
+</script>
+</body>
+</html>

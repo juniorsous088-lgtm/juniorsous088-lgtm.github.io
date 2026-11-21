@@ -1,0 +1,69 @@
+{
+  "name": "ZLQ Fácil - Zona Livre de Queda",
+  "short_name": "ZLQ Fácil",
+  "description": "Cálculo de Zona Livre de Queda, fator de queda e força de impacto para trabalho em altura (NR-35).",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f6f8",
+  "theme_color": "#1f4e8c",
+  "categories": [
+    "productivity",
+    "utilities",
+    "business"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "./",
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "screenshots/android-1-calculadora.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Calculadora"
+    },
+    {
+      "src": "screenshots/android-2-ilustracao.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Cenário ilustrado"
+    },
+    {
+      "src": "screenshots/android-3-forca.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Força máxima"
+    },
+    {
+      "src": "screenshots/android-4-exemplos.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Exemplos"
+    }
+  ]
+}
