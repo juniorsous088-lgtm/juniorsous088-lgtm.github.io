@@ -1,6 +1,6 @@
 /* ZLQ Fácil: service worker para funcionar offline.
    Ao publicar uma nova versão, aumente o número em VERSAO. */
-const VERSAO = "zlq-v1.1.2";
+const VERSAO = "zlq-v1.2.0";
 const ARQUIVOS = ["./", "./index.html", "./pdf.js", "./manifest.webmanifest", "./privacidade.html", "./termos.html",
   "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-512.png", "./icons/apple-touch-icon.png", "./icons/favicon-32.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(VERSAO).then(c => c.addAll(ARQUIVOS))); self.skipWaiting(); });

@@ -79,6 +79,11 @@
       this.y -= h+6;
       this.c.push(`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${this.y.toFixed(2)} cm /Im${id} Do Q`);
     }
+    imagemXY(dataUrl, wPx, hPx, x, y, w, h){
+      const bin = atob(dataUrl.split(",")[1]);
+      const id = this.imgs.length; this.imgs.push({bin,w:wPx,h:hPx});
+      this.c.push(`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im${id} Do Q`);
+    }
     rodape(txt){
       const n=this.pages.length;
       this.pages.forEach((c,k)=>{
