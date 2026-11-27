@@ -378,8 +378,8 @@ body.ac nav button.on{color:#fff}
         <div class="row2">
           <div><label>Engate até os pés (h<sub>D</sub>) <small>m</small></label>
           <input id="hD" type="number" step="0.05" min="0" value="1.5"></div>
-          <div><label>Margem de segurança (S) <small>m</small></label>
-          <input id="S" type="number" step="0.05" min="0" value="1"></div>
+          <div><label>Distância de segurança (S) <small>m, mínimo obrigatório 1 m</small></label>
+          <input id="S" type="number" step="0.05" min="1" value="1"></div>
         </div>
         <p class="note">F<sub>a</sub>/F<sub>m</sub>: o absorvedor abre com uma força média menor que o pico declarado; 0,875 vem de 16 ensaios EN 355 (Ortiz-Morales et al., 2020). Usar valor menor aumenta a abertura calculada (mais conservador). Fator 1,4: conversão de massa rígida de ensaio para corpo humano aceita pela OSHA (carta de 1991, com Sulowski entre os consultados); reduz a força exibida, por isso o padrão é 1,0. A e F<sub>m</sub>: use o manual e o CA do equipamento. Os padrões (1,75 m e 6 kN) são o pior caso. K é usado só para estimar a força sem absorvedor ou com o absorvedor esgotado; o padrão de 92 kN foi calibrado para reproduzir cerca de 20 kN com fator de queda 2 e 100 kg, valor citado pelo MTE no Comunicado 54.</p>
       </details>
@@ -478,7 +478,7 @@ body.ac nav button.on{color:#fff}
       <label>Recursos no local</label>
       <input id="resgRec" placeholder="Ex.: kit de resgate, maca, rádio, PEMT reserva">
       <div id="resgAviso" class="note"></div>
-      <p class="note">Faixas de tempo: até 6 min dentro dos parâmetros, de 6 a 10 min atenção, acima de 10 min não atende. O limite de 10 min segue o Anexo D da NBR 16489 (pré-síncope em cerca de 20% das pessoas suspensas imóveis nesse tempo); a faixa de 6 min é critério interno. Prefira métodos que não exponham o resgatista a queda (NBR 16489, 11.1).</p>
+      <p class="note">Faixas de tempo (critério do app): até 6 min dentro dos parâmetros; acima de 6 min, atenção, com alerta reforçado acima de 10 min. A referência de 10 min vem da informação do Anexo D da NBR 16489, que é informativo: o anexo não fixa tempo máximo, orienta retirar a vítima da suspensão o mais rápido possível e cita pré-síncope em cerca de 20% das pessoas suspensas imóveis em até 10 min. A obrigação de prever o resgate é da NR-35. Prefira métodos que não exponham o resgatista a queda (NBR 16489, 11.1).</p>
     </div>
     <div class="card" data-et="lib" id="c_iso">
       <h2>Isolamento da área abaixo <small>queda de ferramentas e materiais</small></h2>
@@ -679,7 +679,7 @@ body.ac nav button.on{color:#fff}
     <h3>Trava-quedas guiado em linha vertical</h3>
     <p>Usado em escada fixa, torre e silo. O dispositivo corre numa linha rígida (trilho) ou flexível (cabo) e acompanha o trabalhador. O fabricante informa a distância de parada para a massa; o app calcula <code>ZLQ = d + D<sub>f</sub> + h<sub>D</sub> + S</code>, medida a partir do dispositivo. Mantenha o dispositivo na altura do ponto de conexão ou acima e use-o só com a linha do mesmo fabricante.</p>
     <h3>Plano de resgate</h3>
-    <p>Quem fica suspenso no cinturão após uma queda corre risco de trauma de suspensão. Por isso o plano de resgate (método, equipe, recursos e tempo para alcançar o trabalhador) entra na classificação. As faixas de tempo usadas pelo app (até 6 min, até 15 min, acima de 15 min) são critério interno.</p>
+    <p>Quem fica suspenso no cinturão após uma queda corre risco de trauma de suspensão. Por isso o plano de resgate (método, equipe, recursos e tempo para alcançar o trabalhador) entra na classificação. As faixas de tempo usadas pelo app (até 6 min dentro dos parâmetros; acima disso, atenção, com alerta reforçado acima de 10 min) são critério do app. A referência de 10 min vem do Anexo D da NBR 16489, que é informativo e não fixa tempo máximo.</p>
     <h3>Trava-quedas retrátil</h3>
     <p>O cabo fica sempre esticado, então não há fator de queda. O fabricante informa a distância de frenagem D<sub>f</sub>, que já inclui o travamento. Com o retrátil a d metros acima do engate e na vertical do trabalhador: <code>ZLQ = d + D<sub>f</sub> + h<sub>D</sub> + S</code>, medida a partir do retrátil. O retrátil precisa estar acima do engate dorsal, salvo modelos certificados para uso em borda.</p>
     <h3>Linha de vida horizontal flexível</h3>
@@ -716,7 +716,7 @@ body.ac nav button.on{color:#fff}
 <section id="tab-sobre" class="hide">
   <div class="card edu">
     <h2>Sobre o ZLQ Fácil</h2>
-    <p><b>Versão 1.3.0</b> · desenvolvido por Expedito Junio da Silva Sousa.</p>
+    <p><b>Versão 1.3.1</b> · desenvolvido por Expedito Junio da Silva Sousa.</p>
     <p>Calculadora de apoio à Análise de Risco de trabalho em altura: Zona Livre de Queda, fator de queda, força máxima no trabalhador, queda pendular, deflexão de linha de vida e isolamento da área abaixo.</p>
     <h3>Referências usadas</h3>
     <ul class="rec">
@@ -743,7 +743,7 @@ body.ac nav button.on{color:#fff}
     <h3>Privacidade</h3>
     <p>Nenhum dado sai do aparelho. Não há cadastro, anúncios nem coleta de dados. <a href="privacidade.html">Política de privacidade</a> · <a href="termos.html">Termos de uso</a>.</p>
     <div class="btns">
-      <a class="btn" id="bSug" href="mailto:juniorsous88@hotmail.com?subject=Sugest%C3%A3o%20ZLQ%20F%C3%A1cil%20v1.3.0">Enviar sugestão</a>
+      <a class="btn" id="bSug" href="mailto:juniorsous88@hotmail.com?subject=Sugest%C3%A3o%20ZLQ%20F%C3%A1cil%20v1.3.1">Enviar sugestão</a>
       <button class="btn sec" id="bTutorial">Ver tutorial</button>
     </div>
     <p class="note">Os resultados são estimativas e não substituem os dados do fabricante, o CA dos equipamentos nem a avaliação do profissional qualificado.</p>
@@ -751,7 +751,7 @@ body.ac nav button.on{color:#fff}
 </section>
 </main>
 <footer>
-  <span>ZLQ Fácil v1.3.0</span>
+  <span>ZLQ Fácil v1.3.1</span>
   <a href="privacidade.html">Política de privacidade</a>
   <a href="termos.html">Termos de uso</a>
   <span id="statusOff"></span>
@@ -960,8 +960,8 @@ function calcular(i){
       if(i.guiLinha==="flex" && !(i.guiElast>0 && i.guiComp>0)){ r.nQ = Math.max(r.nQ,1); r.motQ += "; alongamento da linha flexível não informado"; } }
     else { r.nQ = i.d > 0 ? 0 : 3; r.motQ = i.d > 0 ? "Ancoragem acima do engate" : "Retrátil ancorado na altura ou abaixo do engate";
       // situações em que o retrátil não é recomendado (NBR 16489, 9.3.7.2 e 9.3.7.7)
-      if(i.modelo==="tanque" && i.tanqueGranel==="sim"){ r.nQ = Math.max(r.nQ,2); r.motQ = "Retrátil sobre material granular solto: não recomendado"; }
-      else if(i.modelo==="telhado"){ r.nQ = Math.max(r.nQ,2); r.motQ = "Retrátil em telhado inclinado: não recomendado"; }
+      if(i.modelo==="tanque" && i.tanqueGranel==="sim"){ r.nQ = Math.max(r.nQ,2); r.motQ = "Retrátil sobre material granular solto: não recomendado pela NBR 16489 (9.3.7.2.2)"; }
+      else if(i.modelo==="telhado"){ r.nQ = Math.max(r.nQ,2); r.motQ = "Retrátil em telhado inclinado: não recomendado pela NBR 16489 (9.3.7.2.2)"; }
       else if(i.retLinha==="sim"){ r.nQ = Math.max(r.nQ,1); r.motQ = "Retrátil em linha de vida: confirmar com o fabricante (efeito mola)"; } }
   } else {
     i.X = th>0 ? i.L*Math.sin(th) : 0;                 // talabarte esticado em ângulo
@@ -1039,7 +1039,7 @@ function calcular(i){
   r.theta = i.X>0 ? Math.asin(Math.min(1, i.X/r.Rp))*180/Math.PI : 0;
   r.vLat = Math.sqrt(2*G*r.dropPend);
   if(i.X<=0){ r.nP=0; r.motP="Ancoragem na vertical"; }
-  else if(sis==="ret" && i.ang>40){ r.nP=2; r.motP="Retrátil a mais de 40° da vertical: acima do limite usual dos fabricantes"; }
+  else if(sis==="ret" && i.ang>40){ r.nP=2; r.motP="Retrátil a mais de 40° da vertical: acima do limite usual dos fabricantes citado na NBR 16489 (16.6.2); só com confirmação do fabricante"; }
   else if(sis==="ret" && i.ang>30){ r.nP=1; r.motP="Retrátil entre 30° e 40°: confirmar o limite e o acréscimo de ZLQ com o fabricante"; }
   else if(r.vLat>3){ r.nP=2; r.motP="Balanço com velocidade alta"; }
   else if(r.vLat>2 || (Fk!=null && Fk>4)){ r.nP=1; r.motP = r.vLat>2 ? "Balanço moderado" : "Retenção lateral acima de 4 kN"; }
@@ -1052,7 +1052,7 @@ function fecharCalculo(i, r, sis, lvh){
   // deflexão estimada pelo app: a NBR 16489 (Anexo F.4) reserva esse cálculo ao fabricante
   r.lvEstim = temLinha(i) && i.dlvModo==="calc";
   if(r.lvEstim && !r.restricao) r.nZ = Math.max(r.nZ, 1);
-  r.nS = i.S < 1 ? 2 : 0; r.motS = i.S < 1 ? `Margem de ${fmt(i.S)} m, abaixo de 1 m (NBR 16489)` : `Margem de ${fmt(i.S)} m`;
+  r.nS = i.S < 1 ? 2 : 0; r.motS = i.S < 1 ? `Distância de segurança de ${fmt(i.S)} m: o mínimo obrigatório é 1 m` : `Distância de segurança de ${fmt(i.S)} m`;
   r.semDefl = temLinha(i) && i.dlvModo!=="calc" && !(i.Dlv>0);
   if(r.semDefl) r.nZ = Math.max(r.nZ, 1);
   r.nM = i.m <= i.mmax ? 0 : 2;
@@ -1080,7 +1080,7 @@ function fecharCalculo(i, r, sis, lvh){
   const tr = i.resgTempo;
   if(!i.resgMet){ r.nR = 1; r.motR = "Plano de resgate não definido"; }
   else if(!(tr>0)){ r.nR = 1; r.motR = "Tempo até o trabalhador não informado"; }
-  else if(tr > 10){ r.nR = 2; r.motR = `Tempo de ${fmt(tr,0)} min: acima de 10 min`; }
+  else if(tr > 10){ r.nR = 1; r.motR = `Tempo de ${fmt(tr,0)} min: acima de 10 min (critério do app)`; }
   else if(tr > 6 || i.resgMet==="ext"){ r.nR = 1; r.motR = i.resgMet==="ext" ? "Depende só de serviço externo" : `Tempo de ${fmt(tr,0)} min: entre 6 e 10 min`; }
   else if(!i.resgModo || !i.resgAnc2){ r.nR = 1; r.motR = "Definir descida ou içamento e a ancoragem do resgate"; }
   else if(i.resgAnc2==="nao" && (i.resgMet==="kit" || i.resgMet==="corda")){ r.nR = 1; r.motR = "Ancoragem do resgate não suporta duas pessoas"; }
@@ -1126,7 +1126,7 @@ function recomendacoes(i, r){
   if(i.sistema==="ret" && i.X>0 && i.ang>30) a.push(`Retrátil a ${fmt(i.ang,0)}° da vertical: a maioria dos fabricantes limita a 30° a 40°. Confirme o limite e o acréscimo de ZLQ no manual (NBR 16489, 16.6.2); o acréscimo mostrado pelo app é estimativa geométrica.`);
   if(r.lvEstim) a.push("A deflexão da linha de vida foi estimada pelo app. A NBR 16489 (Anexo F.4) recomenda que a ZLQ de linha horizontal flexível seja calculada pelo fabricante ou por pessoa autorizada por ele: use a estimativa só para planejar e libere com o valor do projeto.");
   if(temLinha(i) && i.lvN>1) a.push("Mais de um trabalhador na linha: a queda de um deforma a linha em V e pode desequilibrar o outro, que também cai de mais alto. Confirme com o fabricante o uso múltiplo (NBR 16489, 9.5.7.3 e 9.7.6).");
-  if(r.nS) a.push("A distância de segurança abaixo dos pés deve ser de 1 m (NBR 16489, 9.7). Corrija a margem S.");
+  if(r.nS) a.push("A distância de segurança abaixo dos pés é de no mínimo 1 m (NBR 16489, 9.7). Volte S para 1 m ou mais.");
   if(i.sistema==="gui" && i.d<0) a.push("Dispositivo abaixo do ponto de conexão: a folga aumenta a queda. Mantenha o trava-quedas na altura do peito ou acima, conforme o manual.");
   if(i.sistema==="ret" && i.d<=0) a.push("Retrátil ancorado na altura ou abaixo do engate dorsal: só use modelo certificado pelo fabricante para essa condição (uso em borda). Prefira ancorar acima da cabeça.");
   if(i.sistema==="ret" && i.X>0) a.push(`Com o retrátil afastado ${fmt(i.X)} m, o cabo estendido (${fmt(r.R0)} m) aumenta a ZLQ em ${fmt(r.dropPend)} m em relação à ancoragem na vertical.`);
@@ -1144,10 +1144,10 @@ function recomendacoes(i, r){
   if(i.m>100 && !ret && i.sistema!=="sem" && r.nM===0 && !fab) a.push("Massa acima de 100 kg: confirmar que F<sub>m</sub> e A informados são os declarados pelo fabricante para essa massa, e não os do ensaio padrão de 100 kg.");
   if(r.inspRep.length) a.push(`Inspeção pré-uso reprovou: ${r.inspRep.join(", ").toLowerCase()}. Retire de uso e substitua antes de liberar a atividade (NBR 16489).`);
   else if(r.inspPend.length) a.push(`Concluir a inspeção pré-uso: ${r.inspPend.join(", ").toLowerCase()}.`);
-  if(r.nR===2) a.push(`Resgate estimado em ${fmt(i.resgTempo,0)} min. Reduza esse tempo antes de liberar: kit de resgate e equipe treinada no local, ou meio de acesso pronto (PEMT, cesto). Pela NBR 16489 (Anexo D), cerca de 20% das pessoas suspensas imóveis têm pré-síncope em até 10 min.`);
+  if(i.resgMet && i.resgTempo > 10) a.push(`Resgate estimado em ${fmt(i.resgTempo,0)} min. Reduza esse tempo antes de liberar: kit de resgate e equipe treinada no local, ou meio de acesso pronto (PEMT, cesto). O Anexo D da NBR 16489 (informativo) orienta retirar a vítima da suspensão o mais rápido possível e cita pré-síncope em cerca de 20% das pessoas suspensas imóveis em até 10 min. O limite de 10 min é critério do app, não exigência da norma.`);
   if(i.resgPedal==="nao" || i.resgPedal==="") a.push("Inclua pedal de alívio (estribo) no cinturão ou no kit: ele prolonga a tolerância à suspensão até o resgate (NBR 16489, Anexo D).");
   if(i.resgAnc2==="nao" && (i.resgMet==="kit" || i.resgMet==="corda")) a.push("A ancoragem do resgate precisa suportar duas pessoas quando o resgatista desce até a vítima, ou use duas ancoragens independentes (NBR 16489, 11.2.2).");
-  else if(r.nR===1 && i.resgAnc2!=="nao") a.push(!i.resgMet ? "Definir o plano de resgate (método, equipe e recursos no local) antes de liberar a atividade (NR-35)." : !(i.resgTempo>0) ? "Informar o tempo estimado para alcançar o trabalhador suspenso." : i.resgMet==="ext" ? "Depender só de serviço externo costuma levar mais tempo que o tolerável em suspensão. Tenha meios e equipe próprios no local." : (i.resgTempo>6 ? "Tempo de resgate entre 6 e 10 min: confirme se a equipe e o kit ficam junto à frente de trabalho." : "Defina se o resgate será por descida ou içamento e verifique a ancoragem do resgate (NBR 16489, 11.1.3 e 11.2)."));
+  else if(r.nR===1 && i.resgAnc2!=="nao") a.push(!i.resgMet ? "Definir o plano de resgate (método, equipe e recursos no local) antes de liberar a atividade (NR-35)." : !(i.resgTempo>0) ? "Informar o tempo estimado para alcançar o trabalhador suspenso." : i.resgMet==="ext" ? "Depender só de serviço externo costuma levar mais tempo que o tolerável em suspensão. Tenha meios e equipe próprios no local." : (i.resgTempo>10 ? "" : i.resgTempo>6 ? "Tempo de resgate entre 6 e 10 min: confirme se a equipe e o kit ficam junto à frente de trabalho." : "Defina se o resgate será por descida ou içamento e verifique a ancoragem do resgate (NBR 16489, 11.1.3 e 11.2)."));
   r.vidaVenc.forEach(d=> a.push(`Fora do prazo de validade do fabricante: ${d}. Retire de uso (NBR 16489, 13.2).`));
   r.inspVenc.forEach(d=> a.push(`Inspeção detalhada vencida no cadastro: ${d}. A NBR 16489 (13.1.2) pede inspeção por profissional qualificado a cada no máximo 6 meses (3 em condição severa).`));
   r.caVenc.forEach(d=> a.push(`CA vencido no cadastro: ${d}. Verificar a situação do CA (NR-6) antes de usar.`));
